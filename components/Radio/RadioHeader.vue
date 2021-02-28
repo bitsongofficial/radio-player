@@ -4,23 +4,26 @@
     gradient="to bottom, rgba(0,0,0,.4), rgba(0,0,0,1)"
     :height="$vuetify.breakpoint.mdAndUp ? height : ``"
   >
-    <v-container fluid class="d-flex align-end fill-height">
+    <v-container fluid :class="{'fill-height': $vuetify.breakpoint.mdAndUp}" class="d-flex align-end">
       <v-row align="end">
-        <v-col md="9" class="mx-auto py-8">
+        <v-col
+          md="9"
+          class="mx-auto py-8"
+        >
           <v-row justify="start" align="start">
             <v-col
               :class="{
                 'flex-grow-0 flex-shrink-0 pr-6 pl-0':
                   $vuetify.breakpoint.mdAndUp
               }"
-              v-if="radio.picture !== null"
+              v-if="radio.picture !== null && $vuetify.breakpoint.mdAndUp"
             >
               <v-img :src="radio.picture" max-width="265" max-height="265" />
             </v-col>
             <v-col align-self="center" class="flex-grow-1 flex-shrink-0">
-              <h1 class="text-h2">{{ radio.name }}</h1>
-              <p>{{ radio.country.name }}</p>
-              <div class="subtitle-1 min-h-24">
+              <h1 class="text-h2 white--text">{{ radio.name }}</h1>
+              <p class="white--text">{{ radio.country.name }}</p>
+              <div class="subtitle-1 min-h-24 white--text">
                 <v-flex class="d-flex flex-row">
                   <!-- TODO: Disabled Placeholder social links
                   <v-btn icon :href="radio.website" target="_blank">
@@ -64,7 +67,7 @@
                 <v-menu bottom left>
                   <template v-slot:activator="{ on }">
                     <v-btn icon class="ml-4" v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
+                      <v-icon color="white">mdi-dots-vertical</v-icon>
                     </v-btn>
                   </template>
                   <v-list tile class="py-0">
@@ -113,6 +116,11 @@ export default {
     return {
       showDetails: false
     };
+  },
+  computed: {
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`]
+    }
   },
   methods: {
     onPlay(item) {

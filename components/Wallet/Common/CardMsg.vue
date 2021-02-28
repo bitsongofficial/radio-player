@@ -1,5 +1,5 @@
 <template>
-  <v-card :loading="loading" :disabled="loading">
+  <v-card :loading="loading" :disabled="loading" :flat="flat">
     <v-card-title v-text="title"></v-card-title>
     <v-card-subtitle v-text="subtitle"></v-card-subtitle>
     <v-divider></v-divider>
@@ -75,7 +75,13 @@ export default {
     subtitle: String,
     memo: String,
     gas_price: [Number, String],
-    gas_limit: [Number, String]
+    gas_limit: [Number, String],
+    flat: {
+      type: Boolean,
+      default() {
+        return false
+      }
+    }
   },
   data() {
     return {

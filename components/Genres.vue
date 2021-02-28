@@ -5,7 +5,8 @@
         <v-alert colored-border :color="createRandomColor()" border="left">
           <nuxt-link :to="`/radio/genre/${i.slug}`">
             <span
-              class="w-100 fill-height text-truncate white--text font-weight-medium"
+              :class="isDarkTheme ? 'white--text' : 'black--text'"
+              class="w-100 fill-height text-truncate font-weight-medium"
               >{{ i.name }}</span
             >
           </nuxt-link>
@@ -23,6 +24,11 @@ export default {
       default() {
         return []
       }
+    }
+  },
+  computed: {
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`]
     }
   },
   methods: {

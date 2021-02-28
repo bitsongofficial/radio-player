@@ -11,10 +11,10 @@
       </h2>
     </div>
 
-    <genres class="mb-8"></genres>
-    <template v-for="country in countries">
+    <genres :items="genres" class="mb-8"></genres>
+    <template v-for="(country, index) in countries">
       <track-grid-featured
-        :key="country.country"
+        :key="index"
         class="mb-8"
         :title="`Top Radio in ${country.country.name}`"
         :items="country.radios"
@@ -60,10 +60,9 @@ export default {
   },
 
   async created() {
-    const explore = await this.$api.getByExplore();
-
-    this.countries = explore.countries;
-    this.genres = explore.genres;
+    const exploreGenres = await this.$api.getExploreGenres()
+    this.countries = await this.$api.getExploreCountries()
+    this.genres = exploreGenres.map(g => g.genre)
   }
 };
 </script>

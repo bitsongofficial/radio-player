@@ -2,11 +2,11 @@
   <v-card>
     <v-card-title>
       <v-row>
-        <v-col cols="10">
+        <v-col>
           <h2 class="headline font-weight-regular">{{ `#${proposal.proposal_id}` }}</h2>
           <h3 class="headline font-weight-regular">{{ proposal.title }}</h3>
         </v-col>
-        <v-col cols="2" class="d-flex flex-row-reverse">
+        <v-col class="d-flex flex-row-reverse">
           <v-chip
             :color="proposal.proposal_status === 'Passed' ? 'green' : 'red'"
             outlined
@@ -170,10 +170,10 @@ export default {
 
   computed: {
     explorerUrl () {
-      return process.env.URL_ACCOUNT_EXPLORER
+      return this.$store.getters["app/url_account_explorer"];
     },
     microStakeDenom () {
-      return process.env.MICROSTAKEDENOM
+      return this.$store.getters["app/micro_stake_denom"];
     },
     parsedDescription () {
       if (this.proposal === null) {

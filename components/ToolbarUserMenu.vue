@@ -1,6 +1,11 @@
 <template>
   <div class="text-center">
-    <v-menu v-model="menu" :nudge-width="200" offset-y>
+    <v-menu
+      v-model="menu"
+      :nudge-width="200"
+      :close-on-content-click="false"
+      offset-y
+    >
       <template v-slot:activator="{ on }">
         <v-avatar style="cursor:pointer" v-on="on" size="48">
           <Jdenticon :address="address" />
@@ -14,7 +19,10 @@
           </v-list-item-avatar>
           <v-list-item-content></v-list-item-content>
           <v-list-item-action>
-            <v-btn icon>
+            <v-slide-x-reverse-transition>
+              <span v-if="copied" class="v-markup__copied">Copied</span>
+            </v-slide-x-reverse-transition>
+            <v-btn @click="copyAddress" aria-label="Copy" icon>
               <v-icon>mdi-content-copy</v-icon>
             </v-btn>
           </v-list-item-action>
@@ -79,7 +87,8 @@ export default {
   data() {
     return {
       menu: false,
-      showAddress: false
+      showAddress: false,
+      copied: false
     };
   },
   methods: {
@@ -89,6 +98,32 @@ export default {
     },
     onCloseAddress() {
       this.showAddress = false;
+    },
+    copyAddress() {
+      const tmp = document.createElement('textarea')
+      tmp.textContent = this.address
+      tmp.style.position = "fixed"
+      document.body.appendChild(tmp)
+      tmp.select()
+      document.execCommand("copy")
+      this.copied = true
+
+      if (window.getSelection) {
+        if (window.getSelection().empty) {
+          // Chrome
+          window.getSelection().empty()
+        } else if (window.getSelection().removeAllRanges) {
+          // Firefox
+          window.getSelection().removeAllRanges()
+        }
+      } else if (document.selection) {
+        // IE?
+        document.selection.empty()
+      }
+      setTimeout(() => {
+        this.copied = false
+        tmp.remove()
+      }, 1000)
     }
   },
   computed: {
@@ -120,5 +155,9 @@ export default {
 .v-list-item__title,
 .v-list-item__subtitle {
   white-space: normal;
+}
+.v-markup__copied {
+  margin-top:5px;
+  margin-right: 40px;
 }
 </style>

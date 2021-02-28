@@ -4,8 +4,10 @@
       <v-toolbar flat color="transparent">
         <v-toolbar-title>Your stake</v-toolbar-title>
         <v-spacer></v-spacer>
+        <!-- TODO: disabled until implementation of staking -->
         <v-btn
           :loading="loading"
+          :disabled="true"
           color="orange darken-1"
           depressed
           outlined
@@ -119,7 +121,7 @@ export default {
       return this.$store.getters["wallet/address"];
     },
     explorerUrl() {
-      return process.env.URL_ACCOUNT_EXPLORER;
+      return this.$store.getters["app/url_account_explorer"];
     },
     delegations() {
       return this.$store.getters["staking/delegations"];

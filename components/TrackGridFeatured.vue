@@ -10,12 +10,12 @@
         <slot name="action" v-if="$vuetify.breakpoint.smAndDown" />
       </div>
     </div>
-    <slider v-if="$vuetify.breakpoint.smAndDown">
+    <slider v-if="$vuetify.breakpoint.smAndDown" show-arrows>
       <template v-for="(item, i) in items">
         <track-grid-item :key="i" :item="item"></track-grid-item>
       </template>
     </slider>
-    <v-slide-group v-else center-active class="ml-n2">
+    <v-slide-group v-else center-active class="ml-n2" show-arrows>
       <v-slide-item v-for="(item, i) in items" :key="i">
         <track-grid-item :item="item"></track-grid-item>
       </v-slide-item>

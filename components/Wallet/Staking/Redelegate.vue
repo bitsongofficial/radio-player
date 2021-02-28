@@ -9,6 +9,7 @@
     v-on:update:memo="form.memo = $event"
     v-on:update:gas_price="form.gas_price = $event"
     v-on:update:gas_limit="form.gas_limit = $event"
+    :flat="true"
   >
     <template v-slot:fields>
       <input-validator
@@ -69,7 +70,7 @@ import StakingRedelegateConfirmation from '@/components/Wallet/Staking/Redelegat
 
 export default {
   props: {
-    value: String
+    value: Object
   },
 
   components: {
@@ -98,7 +99,8 @@ export default {
 
   created() {
     this.form.gas_price = this.$store.getters['app/gas_price']
-    //this.form.gas_limit = this.$store.getters['app/gas_limit']
+    this.form.gas_limit = this.$store.getters['app/gas_limit']
+    this.form.from_validator = this.value.operator_address
   },
 
   watch: {

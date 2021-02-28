@@ -1,54 +1,76 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="proposals"
-    :loading="loading"
-    hide-default-footer
-  >
-    <v-progress-linear
-      v-slot:progress
-      color="blue"
-      indeterminate
-    ></v-progress-linear>
+  <v-card flat>
+    <v-card-title>
+      <v-toolbar flat color="transparent">
+        <v-spacer></v-spacer>
+        <!-- TODO: disabled until implementation -->
+        <v-btn
+          :loading="loading"
+          :disabled="true"
+          color="orange darken-1"
+          depressed
+          outlined
+          rounded
+          ripple
+          @click.stop="onNewProposal"
+        >
+          New Proposal
+        </v-btn>
+      </v-toolbar>
+    </v-card-title>
+    <v-card-text>
+      <v-data-table
+        :headers="headers"
+        :items="proposals"
+        :loading="loading"
+        hide-default-footer
+      >
+        <v-progress-linear
+          v-slot:progress
+          color="blue"
+          indeterminate
+        ></v-progress-linear>
 
-    <!-- ID cell -->
-    <template v-slot:item.proposal_id="{ item }">
-      <span class="caption-1">{{ `#${item.proposal_id}` }}</span>
-    </template>
+        <!-- ID cell -->
+        <template v-slot:item.proposal_id="{ item }">
+          <span class="caption-1">{{ `#${item.proposal_id}` }}</span>
+        </template>
 
-    <!-- Title cell -->
-    <template v-slot:item.title="{ item }">
-      <a class="caption-1" :href="`/wallet/proposals/${item.proposal_id}`">
-        {{ item.title }}
-      </a>
-    </template>
+        <!-- Title cell -->
+        <template v-slot:item.title="{ item }">
+          <a class="caption-1" :href="`/wallet/proposals/${item.proposal_id}`">
+            {{ item.title }}
+          </a>
+        </template>
 
-    <!-- Status cell -->
-    <template v-slot:item.proposal_status="{ item }">
-      <status-with-dot :status="item.proposal_status" />
-    </template>
+        <!-- Status cell -->
+        <template v-slot:item.proposal_status="{ item }">
+          <status-with-dot :status="item.proposal_status" />
+        </template>
 
-    <!-- Voting start date cell -->
-    <template v-slot:item.voting_start_time="{ item }">
-      <span class="caption-1">{{
-        formatTimestamp(item.voting_start_time)
-      }}</span>
-    </template>
+        <!-- Voting start date cell -->
+        <template v-slot:item.voting_start_time="{ item }">
+          <span class="caption-1">{{
+            formatTimestamp(item.voting_start_time)
+          }}</span>
+        </template>
 
-    <!-- Submit time cell -->
-    <template v-slot:item.submit_time="{ item }">
-      <span class="caption-1">{{ formatTimestamp(item.submit_time) }}</span>
-    </template>
+        <!-- Submit time cell -->
+        <template v-slot:item.submit_time="{ item }">
+          <span class="caption-1">{{ formatTimestamp(item.submit_time) }}</span>
+        </template>
 
-    <!-- Total deposit cell -->
-    <template v-slot:item.total_deposit_amount="{ item }">
-      <amount
-        style="font-size: 12pt"
-        :micro-amount="item.total_deposit_amount"
-        :denom="microStakeDenom"
-      />
-    </template>
-  </v-data-table>
+        <!-- Total deposit cell -->
+        <template v-slot:item.total_deposit_amount="{ item }">
+          <amount
+            style="font-size: 12pt"
+            :micro-amount="item.total_deposit_amount"
+            :denom="microStakeDenom"
+          />
+        </template>
+      </v-data-table>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -83,7 +105,7 @@ export default {
 
   computed: {
     microStakeDenom() {
-      return process.env.MICROSTAKEDENOM;
+      return this.$store.getters["app/micro_stake_denom"];
     }
   },
 
@@ -187,7 +209,11 @@ export default {
           voting_start_time: "2021-01-29T05:35:54.623785Z",
           yes: "88530588570370"
         }
-      ];
+      ]
+    },
+    onNewProposal () {
+      // TODO: Placeholder
+      return false
     },
     formatTimestamp(ts) {
       return formatTimestamp(ts);

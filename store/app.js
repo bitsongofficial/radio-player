@@ -6,7 +6,8 @@ export const state = () => ({
   gas_limit: process.env.DEFAULT_GAS_LIMIT,
   decimals: process.env.DECIMALS,
   address_length: process.env.ADDRESS_LENGTH,
-  address_prefix: process.env.ADDRESS_PREFIX
+  address_prefix: process.env.ADDRESS_PREFIX,
+  url_account_explorer: process.env.URL_ACCOUNT_EXPLORER
 })
 
 export const getters = {
@@ -33,6 +34,9 @@ export const getters = {
   },
   decimals: state => {
     return state.decimals
+  },
+  url_account_explorer: state => {
+    return state.url_account_explorer;
   }
 }
 

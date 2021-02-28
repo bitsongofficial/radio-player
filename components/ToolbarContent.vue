@@ -10,7 +10,7 @@
         alt="BitSong"
         min-width="135"
         width="135"
-        src="/bitsong_logo_red.svg"
+        :src="isDarkTheme ?  '/bitsong_logo_dark.svg' : '/bitsong_logo_light.svg'"
       />
     </router-link>
 
@@ -21,8 +21,9 @@
       active-class="no-active"
       class="mr-2"
       to="/auth/create"
-      color="primary"
+      color="red darken-2"
       dark
+      depressed
       >Connect Wallet</v-btn
     >
     <v-btn
@@ -38,7 +39,7 @@
 </template>
 
 <script>
-import ToolbarUserMenu from "@/components/ToolbarUserMenu";
+import ToolbarUserMenu from "@/components/ToolbarUserMenu"
 
 export default {
   components: {
@@ -47,7 +48,10 @@ export default {
 
   computed: {
     isLoggedIn() {
-      return this.$store.getters[`wallet/isLoggedIn`];
+      return this.$store.getters[`wallet/isLoggedIn`]
+    },
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`]
     }
   }
 };

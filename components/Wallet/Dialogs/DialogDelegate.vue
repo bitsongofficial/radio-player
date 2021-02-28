@@ -7,18 +7,22 @@
   >
     <v-card flat>
       <v-card-text>
-        <staking-delegations
-          class="mb-8"
-          :loading="loading"
-          :delegations="delegations"
-          v-on:delegate="onDelegate"
-          v-on:unbond="onUnbond"
-        />
-        <staking-delegate
-          id="delegate"
-          v-model="delegate"
-          v-on:txSuccess="getDelegations"
-        ></staking-delegate>
+        <v-row>
+          <v-col cols="12">
+            <staking-delegations
+              class="my-8"
+              :loading="loading"
+              :delegations="delegations"
+              v-on:delegate="onDelegate"
+              v-on:unbond="onUnbond"
+            />
+            <staking-delegate
+              id="delegate"
+              :value="value"
+              v-on:txSuccess="getDelegations"
+            ></staking-delegate>
+          </v-col>
+        </v-row>
       </v-card-text>
 
       <v-card-actions>
@@ -38,6 +42,13 @@ export default {
   components: {
     StakingDelegate,
     StakingDelegations
+  },
+
+  props: {
+    value: {
+      type: Object,
+      default: null
+    }
   },
 
   computed: {

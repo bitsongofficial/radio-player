@@ -9,7 +9,7 @@
       <v-card-text>
         <staking-unbond
           id="unbond"
-          v-model="unbond"
+          v-model="value"
           v-on:txSuccess="getDelegations"
         />
       </v-card-text>
@@ -31,15 +31,13 @@ export default {
     StakingUnbond
   },
 
+  props: {
+    value: Object
+  },
+
   computed: {
     address() {
       return this.$store.getters[`wallet/address`]
-    }
-  },
-
-  data() {
-    return {
-      unbond: null
     }
   },
 

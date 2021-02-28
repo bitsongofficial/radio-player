@@ -4,9 +4,10 @@
       <v-row>
         <v-col cols="6" md="2" class="py-0" v-for="i in cities" :key="i.slug">
           <v-alert colored-border :color="createRandomColor()" border="left">
-            <nuxt-link :to="`/radio/${country}/${i.slug}`">
+            <nuxt-link :to="`/radio/${country}/${i.slug}`" class="elipsis-wrapper">
               <span
-                class="w-100 fill-height text-truncate white--text font-weight-medium"
+                :class="isDarkTheme ? 'white--text' : 'black--text'"
+                class="w-100 fill-height text-truncate font-weight-medium"
                 >{{ i.name }}</span
               >
             </nuxt-link>
@@ -39,6 +40,11 @@ export default {
       console.error(e);
     }
   },
+  computed: {
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`]
+    }
+  },
   methods: {
     createRandomColor() {
       return "hsla(" + Math.random() * 360 + ", 70%, 65%, 1)";
@@ -59,5 +65,10 @@ export default {
 
 #countries a.span {
   color: #fff !important;
+}
+
+.elipsis-wrapper {
+  text-overflow: ellipsis;
+  display: grid;
 }
 </style>

@@ -24,13 +24,6 @@
                 </a>
               </template>
 
-              <!-- Tx cell -->
-              <template v-slot:item.txhash="{ item }">
-                <a class="caption-1" :href="`${explorerUrl}/txs/${item.txhash}`">
-                  {{ truncateString(item.txhash) }}
-                </a>
-              </template>
-
               <!-- Amount cell -->
               <template v-slot:item.amount="{ item }">
                 <amount
@@ -83,7 +76,6 @@ export default {
       loading: false,
       headers: [
         { text: 'Depositor', value: 'depositor' },
-        { text: 'TxHash', value: 'txhash' },
         { text: 'Amount', value: 'amount' },
         { text: 'Time', value: 'time' },
       ],
@@ -98,10 +90,10 @@ export default {
 
   computed: {
     explorerUrl () {
-      return process.env.URL_ACCOUNT_EXPLORER
+      return this.$store.getters["app/url_account_explorer"];
     },
     microStakeDenom () {
-      return process.env.MICROSTAKEDENOM
+      return this.$store.getters["app/micro_stake_denom"];
     }
   },
 

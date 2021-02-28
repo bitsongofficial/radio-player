@@ -1,10 +1,5 @@
 <template>
   <page-template>
-    <v-breadcrumbs :items="breadcrumbs" class="pa-0 ma-0">
-      <template v-slot:divider>
-        <v-icon color="grey">mdi-play</v-icon>
-      </template>
-    </v-breadcrumbs>
     <h1 class="text-h2 mb-2">Proposal details</h1>
     <proposal-details :id="id" />
     <proposal-votes-detail :id="id" class="my-5" />
@@ -33,24 +28,7 @@ export default {
 
   data() {
     return {
-      id: null,
-      breadcrumbs: [
-        {
-          text: 'Radio',
-          disabled: false,
-          href: '/'
-        },
-        {
-          text: 'Wallet',
-          disabled: false,
-          href: '/wallet'
-        },
-        {
-          text: 'Governance',
-          disabled: true,
-          href: '#'
-        }
-      ]
+      id: null
     }
   },
 

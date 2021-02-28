@@ -6,12 +6,12 @@
         <v-col cols="12" class="py-0">
           <v-flex class="tabs-wrapper overflow-none mb-3">
             <!-- Tabs menu -->
-            <v-tabs v-model="tab" grow centered show-arrows>
+            <v-tabs v-model="tab" grow centered>
               <v-tab
                 v-for="(item, i) in tabs"
                 :key="i"
                 :to="item.ref"
-                class="black"
+                :class="isDarkTheme ? 'black' : 'grey lighten-3'"
                 exact
               >
                 {{ item.name }}
@@ -50,7 +50,10 @@ export default {
 
   computed: {
     address() {
-      return this.$store.getters["wallet/address"];
+      return this.$store.getters["wallet/address"]
+    },
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`]
     }
   },
 

@@ -8,6 +8,7 @@
     <v-card>
       <v-card-text>
         <staking-redelegate
+          v-model="value"
           v-on:txSuccess="getDelegations"
         />
       </v-card-text>
@@ -27,6 +28,10 @@ import StakingRedelegate from '@/components/Wallet/Staking/Redelegate'
 export default {
   components: {
     StakingRedelegate
+  },
+
+  props: {
+    value: Object
   },
 
   computed: {

@@ -15,7 +15,7 @@
         > -->
         <v-chip
           class="subtitle-1 px-6 font-weight-medium"
-          outlined
+          :outlined="isDarkTheme"
           :large="$vuetify.breakpoint.mdAndUp"
           :color="createRandomColor()"
           to="/radio/genre"
@@ -25,7 +25,7 @@
         >
         <v-chip
           class="subtitle-1 px-6 font-weight-medium"
-          outlined
+          :outlined="isDarkTheme"
           :large="$vuetify.breakpoint.mdAndUp"
           to="/radio/by-location"
           exact
@@ -40,10 +40,15 @@
 
 <script>
 export default {
+  computed: {
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`]
+    }
+  },
   methods: {
     createRandomColor() {
       return "hsla(" + Math.random() * 360 + ", 70%, 65%, 1)";
-    },
+    }
   },
 };
 </script>

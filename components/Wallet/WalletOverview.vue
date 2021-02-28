@@ -8,7 +8,7 @@
             <v-btn
               target="_blank"
               title="Bitsong explorer"
-              :href="`${explorerUrl}/account/${this.address}`"
+              :href="`${explorerUrl}/${this.address}`"
               class="ml-2"
               small
               icon
@@ -22,7 +22,7 @@
                 <markup :content="address"></markup>
               </v-col>
               <v-col cols="2" class="pt-0">
-                <v-flex class="d-flex flex-row flex-md-column">
+                <v-flex class="d-flex" :class="$vuetify.breakpoint.mdAndUp ? 'flex-row' : 'flex-column'">
                   <v-btn icon @click.stop="showAddress = true">
                     <v-icon>mdi-qrcode-scan</v-icon>
                   </v-btn>
@@ -95,7 +95,7 @@ export default {
       return this.$store.getters["wallet/address"];
     },
     explorerUrl() {
-      return process.env.URL_ACCOUNT_EXPLORER;
+      return this.$store.getters["app/url_account_explorer"];
     },
     decimals() {
       return this.$store.getters["app/decimals"];
