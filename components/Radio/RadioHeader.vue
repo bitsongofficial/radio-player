@@ -4,7 +4,11 @@
     gradient="to bottom, rgba(0,0,0,.4), rgba(0,0,0,1)"
     :height="$vuetify.breakpoint.mdAndUp ? height : ``"
   >
-    <v-container fluid class="d-flex align-end fill-height">
+    <v-container
+      :class="{'fill-height': $vuetify.breakpoint.mdAndUp}"
+      class="d-flex align-end"
+      fluid
+    >
       <v-row align="end">
         <v-col md="9" class="mx-auto py-8">
           <v-row justify="start" align="start">
@@ -15,7 +19,12 @@
               }"
               v-if="radio.picture !== null"
             >
-              <v-img :src="radio.picture" max-width="265" max-height="265" />
+              <v-img
+                v-if="radio.picture !== null && $vuetify.breakpoint.mdAndUp"
+                :src="radio.picture"
+                max-width="265"
+                max-height="265"
+              />
             </v-col>
             <v-col align-self="center" class="flex-grow-1 flex-shrink-0">
               <h1 class="text-h2">{{ radio.name }}</h1>
