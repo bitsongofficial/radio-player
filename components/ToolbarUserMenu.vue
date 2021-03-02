@@ -1,6 +1,11 @@
 <template>
   <div class="text-center">
-    <v-menu v-model="menu" :nudge-width="200" offset-y>
+    <v-menu
+      v-model="menu"
+      :nudge-width="200"
+      :close-on-content-click="false"
+      offset-y
+      >
       <template v-slot:activator="{ on }">
         <v-avatar style="cursor:pointer" v-on="on" size="48">
           <Jdenticon :address="address" />
@@ -14,7 +19,10 @@
           </v-list-item-avatar>
           <v-list-item-content></v-list-item-content>
           <v-list-item-action>
-            <v-btn icon>
+            <v-slide-x-reverse-transition>
+              <span v-if="copied" class="v-popover__copied">Copied</span>
+            </v-slide-x-reverse-transition>
+            <v-btn icon @click.stop="copyAddressToClipboard">
               <v-icon>mdi-content-copy</v-icon>
             </v-btn>
           </v-list-item-action>
@@ -70,6 +78,7 @@
 <script>
 import Jdenticon from "@/components/Jdenticon";
 import DialogWalletAddress from "@/components/Wallet/Dialogs/DialogWalletAddress.vue";
+import { copyToClipboard } from '@/lib/utils'
 
 export default {
   components: {
@@ -79,7 +88,8 @@ export default {
   data() {
     return {
       menu: false,
-      showAddress: false
+      showAddress: false,
+      copied: false
     };
   },
   methods: {
@@ -89,6 +99,12 @@ export default {
     },
     onCloseAddress() {
       this.showAddress = false;
+    },
+    copyAddressToClipboard() {
+      this.copied = copyToClipboard(this.address)
+      setTimeout(() => {
+        this.copied = false
+      }, 1000)
     }
   },
   computed: {
@@ -120,5 +136,10 @@ export default {
 .v-list-item__title,
 .v-list-item__subtitle {
   white-space: normal;
+}
+.v-popover__copied {
+  margin-top:5px;
+  margin-right: 40px;
+  position: absolute;
 }
 </style>
