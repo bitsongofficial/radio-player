@@ -23,7 +23,10 @@
         >{{ item.name }}</router-link
       >
     </div>
-    <div class="text-wrap track-grid__item_subtitle">
+    <div
+      :class="isDarkTheme ? 'white--text' : 'black--text'"
+      class="text-wrap track-grid__item_subtitle"
+    >
       {{ item.city.name }},
       <router-link nuxt :to="`/radio/${item.country.slug}`">{{
         item.country.name
@@ -88,6 +91,9 @@ export default {
     },
     isLoading() {
       return this.$store.getters["player/loading"];
+    },
+    isDarkTheme() {
+      return this.$store.getters[`app/dark_theme`];
     }
   }
 };

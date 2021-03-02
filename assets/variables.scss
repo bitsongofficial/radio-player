@@ -1,0 +1,9 @@
+@import '~vuetify/src/styles/styles.sass';
+$light-background-color: #fff;
+$material-light: map-merge($material-light, ('background': $light-background-color));
+
+.theme--light {
+    .v-application--wrap {
+        background: $light-background-color
+    }
+}
