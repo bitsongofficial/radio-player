@@ -67,7 +67,7 @@
           <td class="text-right">
             <!-- Tokens cell -->
             <amount
-              style="font-size: 1.4em;"
+              style="font-size: 1.2em;"
               class="my-auto"
               :micro-amount="item.tokens"
               :denom="denom"
@@ -93,22 +93,49 @@
               }}%
             </span>
           </td>
+          <td class="text-right">
+            <v-menu bottom left>
+              <template v-slot:activator="{ on }">
+                <v-btn icon color="grey" class="ml-4" v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list tile class="py-0">
+                <v-list-item nuxt-link @click.stop="onDelegate(item)">
+                  <v-list-item-title>Delegate</v-list-item-title>
+                </v-list-item>
+                <v-list-item nuxt-link @click.stop="showRedelegate = true">
+                  <v-list-item-title>Redelegate</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </td>
         </tr>
       </template>
     </v-data-table>
     <dialog-validator
       v-if="showModal"
-      :value="selected"
+      :validator="selected"
       v-on:cancel="onClose"
     />
+    <dialog-delegate
+      v-if="showDelegate"
+      :validator="selected"
+      v-on:cancel="showDelegate = false"
+    ></dialog-delegate>
+    <dialog-redelegate
+      v-if="showRedelegate"
+      v-on:cancel="showRedelegate = false"
+    >
+    </dialog-redelegate>
   </v-card>
 </template>
 
 <script>
-import ValidatorAvatar from "@/components/Wallet/Common/AvatarToken.vue";
-import Amount from "@/components/Wallet/Common/Amount.vue";
-import DotStatusWithTooltip from "@/components/Wallet/Common/DotStatusWithTooltip.vue";
-import WarningCommissionIcon from "@/components/Wallet/Common/WarningCommissionIcon.vue";
+import ValidatorAvatar from "@/components/Wallet/Common/AvatarToken";
+import Amount from "@/components/Wallet/Common/Amount";
+import DotStatusWithTooltip from "@/components/Wallet/Common/DotStatusWithTooltip";
+import WarningCommissionIcon from "@/components/Wallet/Common/WarningCommissionIcon";
 
 export default {
   components: {
@@ -118,20 +145,21 @@ export default {
     WarningCommissionIcon
   },
 
-  // TODO: replace placeholders
   data() {
     return {
       loading: false,
       showModal: false,
+      showDelegate: false,
+      showRedelegate: false,
       query: null,
       queryType: "all",
       selected: null,
       headers: [
         { text: "Name", value: "description" },
         { text: "Tokens", value: "tokens", align: "right" },
-        { text: "Commission", value: "commission", align: "right" }
+        { text: "Commission", value: "commission", align: "right" },
+        { text: "", align: "right" }
       ]
-      //validators: []
     };
   },
 
@@ -147,21 +175,12 @@ export default {
     }
   },
 
-  async created() {
-    // await this.getValidators()
-  },
-
   methods: {
-    // async getValidators () {
-    //   const validators = await this.$btsg.getValidators()
-
-    //   if (validators.result.length > 0) {
-    //     this.validators = validators.result
-    //       .sort((a, b) => {
-    //         return b.tokens - a.tokens
-    //       })
-    //   }
-    // },
+    onDelegate(validator) {
+      this.selected = validator;
+      console.log(this.selected);
+      this.showDelegate = true;
+    },
     filterValidators(items, query, type) {
       if (items === null) {
         return [];

@@ -32,6 +32,7 @@
     </template>
 
     <template v-slot:actions>
+      <v-btn text @click.stop="$emit('cancel')">Close</v-btn>
       <v-btn :disabled="isDisabled" color="primary" @click.stop="onSend">
         Send
       </v-btn>
@@ -56,14 +57,20 @@
 </template>
 
 <script>
-import { Coin, Fee } from '@bitsongofficial/js-sdk'
+import { Coin, Fee } from "@bitsongofficial/js-sdk";
 
-import { convertMacroToMicroAmount, parseErrorResponse } from '@/lib/utils'
-import StakingDelegateConfirmation from '@/components/Wallet/Staking/DelegateConfirmation'
+import { convertMacroToMicroAmount, parseErrorResponse } from "@/lib/utils";
+import StakingDelegateConfirmation from "@/components/Wallet/Staking/DelegateConfirmation";
 
 export default {
   props: {
-    value: String
+    value: {
+      type: String
+    },
+    validator: {
+      type: Object,
+      required: true
+    }
   },
 
   components: {
@@ -77,8 +84,8 @@ export default {
     form: {
       validator: null,
       coin: null,
-      amount: '',
-      memo: '',
+      amount: "",
+      memo: "",
       gas_price: 0,
       gas_limit: 0
     },
@@ -90,13 +97,13 @@ export default {
   }),
 
   created() {
-    this.form.gas_price = this.$store.getters['app/gas_price']
-    this.form.gas_limit = this.$store.getters['app/gas_limit']
+    this.form.gas_price = this.$store.getters["app/gas_price"];
+    this.form.gas_limit = this.$store.getters["app/gas_limit"];
   },
 
   watch: {
     value(val) {
-      this.form.validator = val
+      this.form.validator = val;
     }
   },
 
@@ -105,71 +112,71 @@ export default {
       return (
         this.form.validator === null &&
         this.form.coin === null &&
-        this.form.amount === ''
-      )
+        this.form.amount === ""
+      );
     },
     address() {
-      return this.$store.getters[`wallet/address`]
+      return this.$store.getters[`wallet/address`];
     },
     decimals() {
-      return this.$store.getters['app/decimals']
+      return this.$store.getters["app/decimals"];
     }
   },
   methods: {
     onSend() {
-      this.showModal = true
+      this.showModal = true;
     },
     onCancel() {
-      this.showModal = false
-      this.resetResponse()
+      this.showModal = false;
+      this.resetResponse();
     },
     resetResponse() {
       this.response = {
         success: false,
         log: null,
         tx_hash: null
-      }
+      };
     },
     async onConfirm() {
-      this.resetResponse()
-      this.loadingModal = true
+      this.resetResponse();
+      this.loadingModal = true;
 
       try {
         const amount = new Coin(
           String(convertMacroToMicroAmount(this.form.amount, this.decimals)),
           this.form.coin.toLowerCase()
-        )
+        );
 
         const fee = new Fee(
           [
             new Coin(
               String(this.form.gas_price * this.form.gas_limit),
-              this.$store.getters['app/micro_stake_denom'].toLowerCase()
+              this.$store.getters["app/micro_stake_denom"].toLowerCase()
             )
           ],
           String(this.form.gas_limit)
-        )
+        );
 
         const response = await this.$client.delegate(
           this.form.validator,
           amount,
           this.form.memo,
           fee
-        )
-        this.response = parseErrorResponse(response)
+        );
+        this.response = parseErrorResponse(response);
 
-        this.$emit('txSuccess')
+        this.$emit("txSuccess");
       } catch (e) {
         if (e !== undefined) {
-          console.error(e)
-          this.response.log = e.message
+          console.error(e);
+          this.response.log = e.message;
         } else {
-          this.response.log = `Something went wrong!`
+          this.response.log = `Something went wrong!`;
         }
       }
 
-      this.loadingModal = false
+      this.loadingModal = false;
     }
   }
-}
+};
 </script>

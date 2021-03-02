@@ -77,6 +77,24 @@
           <warning-commission-icon v-if="item.commission > 0.5" />
           <span class="pr-5"> {{ item.commission * 100 }}% </span>
         </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-menu bottom left>
+            <template v-slot:activator="{ on }">
+              <v-btn icon color="grey" class="ml-4" v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
+            <v-list tile class="py-0">
+              <v-list-item nuxt-link :to="`/radio/radio-station/`">
+                <v-list-item-title>Claim rewards</v-list-item-title>
+              </v-list-item>
+              <v-list-item nuxt-link :to="`/radio/radio-station/`">
+                <v-list-item-title>Unbond</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
       </v-data-table>
     </v-card-text>
   </v-card>
@@ -108,7 +126,8 @@ export default {
         { text: "Name", value: "validator" },
         { text: "Stake", value: "staked_balance", align: "right" },
         { text: "Rewards", value: "rewards", align: "right" },
-        { text: "Commission", value: "commission", align: "right" }
+        { text: "Commission", value: "commission", align: "right" },
+        { text: "", value: "actions", align: "right" }
       ],
       items: []
     };

@@ -2,11 +2,7 @@
   <v-card elevation="0">
     <v-toolbar color="transparent" flat>
       <v-spacer></v-spacer>
-      <v-menu
-        transition="slide-y-transition"
-        :disabled="!canChooseOption"
-        top
-      >
+      <v-menu transition="slide-y-transition" :disabled="!canChooseOption" top>
         <template v-slot:activator="{ on }">
           <v-btn
             color="primary"
@@ -14,7 +10,7 @@
             outlined
             v-on="on"
           >
-            {{ selectedItem == null ? 'Underdelegate' : selectedItem }}
+            {{ selectedItem == null ? "Underdelegate" : selectedItem }}
             <v-icon right dark>mdi-menu-down</v-icon>
           </v-btn>
         </template>
@@ -44,93 +40,82 @@
       v-if="showModalDelegations"
       v-on:cancel="onCloseDelagatesDialog"
     />
-    <dialog-unbond
-      v-if="showModalUnbond"
-      v-on:cancel="onCloseUnbondDialog"
-    />
+    <dialog-unbond v-if="showModalUnbond" v-on:cancel="onCloseUnbondDialog" />
     <dialog-redelegate
       v-if="showModalStaking"
       v-on:cancel="onCloseRedelegateDialog"
     />
-    <dialog-edit-validator
-      v-if="showModalEditValidator"
-      v-on:cancel="onCloseValidatorDialog"
-    />
+    <dialog-edit-validator v-if="false" v-on:cancel="onCloseValidatorDialog" />
   </v-card>
 </template>
 
 <script>
-import DialogDelegate from '@/components/Wallet/Dialogs/DialogDelegate.vue'
-import DialogUnbond from '@/components/Wallet/Dialogs/DialogUnbond.vue'
-import DialogRedelegate from '@/components/Wallet/Dialogs/DialogRedelegate.vue'
+import DialogDelegate from "@/components/Wallet/Dialogs/DialogDelegate.vue";
+import DialogUnbond from "@/components/Wallet/Dialogs/DialogUnbond.vue";
+import DialogRedelegate from "@/components/Wallet/Dialogs/DialogRedelegate.vue";
 
 export default {
-
   components: {
     DialogDelegate,
     DialogUnbond,
     DialogRedelegate
   },
-  
+
   data() {
     return {
       selectedItem: null,
-      dropdownActions: [
-        'Unbond',
-        'Redelegate'
-      ],
+      dropdownActions: ["Unbond", "Redelegate"],
       showModalDelegations: false,
       showModalStaking: false,
       showModalUnbond: false
-    }
+    };
   },
 
   computed: {
-    canChooseOption () {
+    canChooseOption() {
       // TODO: placeholder for choosing action if user has staked token on it
-      return true
+      return true;
     },
-    canDelegate () {
+    canDelegate() {
       // TODO: placeholder for can delegate check
-      return true
+      return true;
     }
   },
 
-  created () {
+  created() {
     // TODO: set initial seleceteItem (dropdown) value, (based on validator query?)
-    this.selectedItem = this.dropdownActions[0]
+    this.selectedItem = this.dropdownActions[0];
   },
 
   methods: {
-    onSelectDropdownAction (item) {
+    onSelectDropdownAction(item) {
       // TODO: Open popup selection based on item
-      this.selectedItem = item
+      this.selectedItem = item;
       switch (item) {
-        case 'Unbond':
-          this.showModalUnbond = true
-        break
-        case 'Redelegate':
-          this.showModalStaking = true
-        break
+        case "Unbond":
+          this.showModalUnbond = true;
+          break;
+        case "Redelegate":
+          this.showModalStaking = true;
+          break;
         default:
-          console.log(`Option ${item} not found.`)
-        break
+          console.log(`Option ${item} not found.`);
+          break;
       }
     },
-    onCloseDelagatesDialog () {
-      this.showModalDelegations = false
+    onCloseDelagatesDialog() {
+      this.showModalDelegations = false;
     },
-    onSelectDeleagte () {
-      this.showModalDelegations = true
+    onSelectDeleagte() {
+      this.showModalDelegations = true;
     },
-    
-    onCloseUnbondDialog () {
-      this.showModalUnbond = false
+
+    onCloseUnbondDialog() {
+      this.showModalUnbond = false;
     },
-    onCloseRedelegateDialog () {
-      this.showModalStaking = false
+    onCloseRedelegateDialog() {
+      this.showModalStaking = false;
     }
   }
-
-}
+};
 </script>

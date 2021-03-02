@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="0" class="mb-4">
+  <v-card>
     <v-container>
       <v-row>
         <v-col
@@ -9,7 +9,7 @@
         >
           <validator-avatar :validator="validator" size="55px" />
         </v-col>
-        <v-col cols="12" md="10" align-self="center">
+        <v-col cols="12" md="10">
           <h2 style="display: inline" class="text-h6">
             {{ validator.description.moniker }}
           </h2>
@@ -63,17 +63,6 @@
             </a>
           </div>
         </v-col>
-        <v-col cols="12" md="1" align-self="right">
-          <!-- TODO: show only on privileged wallets -->
-          <v-btn
-            color="grey"
-            class="ml-2"
-            icon
-            @click.stop="onSelectEdit"
-          >
-            <v-icon>mdi-pencil-outline</v-icon>
-          </v-btn>
-        </v-col>
       </v-row>
       <v-divider></v-divider>
       <v-card-text>
@@ -90,7 +79,9 @@
           </v-col>
           <v-col md="6" cols="12">
             <div class="subtitle-1">
-              <nuxt-link :to="`${explorerUrl}/account/${validator.delegator_address}`">
+              <nuxt-link
+                :to="`${explorerUrl}/account/${validator.delegator_address}`"
+              >
                 {{ validator.delegator_address }}
               </nuxt-link>
             </div>
@@ -191,44 +182,43 @@
 </template>
 
 <script>
-import ValidatorAvatar from '@/components/Wallet/Common/ValidatorAvatar'
-import Amount from '@/components/Wallet/Common/Amount'
+import ValidatorAvatar from "@/components/Wallet/Common/ValidatorAvatar";
+import Amount from "@/components/Wallet/Common/Amount";
 export default {
-
   components: {
     ValidatorAvatar,
-    Amount,
+    Amount
   },
 
   props: {
     validator: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
   data() {
     return {
       showModalEditValidator: false
-    }
+    };
   },
 
   computed: {
     stakeDenom() {
-      return process.env.STAKEDENOM
+      return process.env.STAKEDENOM;
     },
-    explorerUrl () {
-      return process.env.URL_ACCOUNT_EXPLORER
+    explorerUrl() {
+      return process.env.URL_ACCOUNT_EXPLORER;
     }
   },
 
   methods: {
-    onSelectEdit () {
-      this.showModalEditValidator = true
+    onSelectEdit() {
+      this.showModalEditValidator = true;
     },
-    onCloseValidatorDialog () {
-      this.showModalEditValidator = false
+    onCloseValidatorDialog() {
+      this.showModalEditValidator = false;
     }
   }
-}
+};
 </script>
