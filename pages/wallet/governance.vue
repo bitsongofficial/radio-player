@@ -18,9 +18,12 @@
 
     <!-- Title cell -->
     <template v-slot:item.title="{ item }">
-      <a class="caption-1" :href="`/wallet/proposals/${item.proposal_id}`">
+      <nuxt-link
+        class="caption-1"
+        :to="`/wallet/proposals/${item.proposal_id}`"
+      >
         {{ item.title }}
-      </a>
+      </nuxt-link>
     </template>
 
     <!-- Status cell -->
@@ -98,9 +101,9 @@ export default {
             proposal_status: p.proposal_status,
             voting_start_time: p.voting_start_time,
             submit_time: p.submit_time,
-            total_deposit_amount: p.total_deposit.reduce((a, b) => {
-              return a === Object ? Number(a.amount) : a + Number(b.amount);
-            }, 0),
+            total_deposit_amount: p.total_deposit.find(
+              d => d.denom === process.env.MICROSTAKEDENOM
+            ).amount,
             total_deposit_denom: process.env.MICROSTAKEDENOM
           };
         });
