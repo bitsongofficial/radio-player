@@ -18,7 +18,7 @@ export default {
   methods: {
     reload() {
       window.location.reload(true);
-    },
-  },
+    }
+  }
 };
 </script>
