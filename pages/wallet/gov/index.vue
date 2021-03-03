@@ -20,7 +20,7 @@
     <template v-slot:item.title="{ item }">
       <nuxt-link
         class="caption-1"
-        :to="`/wallet/proposals/${item.proposal_id}`"
+        :to="`/wallet/gov/proposal/${item.proposal_id}`"
       >
         {{ item.title }}
       </nuxt-link>

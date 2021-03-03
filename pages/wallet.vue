@@ -29,7 +29,7 @@
 
 <script>
 import PageTemplate from "@/components/PageTemplate";
-import WalletOverview from '~/components/Wallet/WalletOverview.vue';
+import WalletOverview from "~/components/Wallet/WalletOverview.vue";
 
 export default {
   components: {
@@ -43,7 +43,7 @@ export default {
       tabs: [
         { name: "Balance", ref: "/wallet" },
         { name: "Earn", ref: "/wallet/earn" },
-        { name: "Governance", ref: "/wallet/governance" }
+        { name: "Governance", ref: "/wallet/gov" }
       ]
     };
   },
