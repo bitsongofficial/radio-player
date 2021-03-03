@@ -92,11 +92,21 @@ export const actions = {
           const val = getters.validators.find(
             v => v.operator_address === d.validator_address
           )
+
+          let valReward = rewards.rewards.find(v => v.validator_address === val.operator_address).reward
+
+          if (valReward === null) {
+            valReward = [{
+              denom: process.env.MICROSTAKEDENOM,
+              amount: 0
+            }]
+          }
+
           return {
             ...d,
             validator_name: val !== undefined ? val.description.moniker : '',
             identity: val !== undefined ? val.description.identity : '',
-            rewards: rewards.rewards.find(v => v.validator_address === val.operator_address).reward[0],
+            rewards: valReward[0],
             commission: val.commission.commission_rates.rate,
             status: val.status
           }

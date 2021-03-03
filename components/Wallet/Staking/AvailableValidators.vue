@@ -104,9 +104,6 @@
                 <v-list-item nuxt-link @click.stop="onDelegate(item)">
                   <v-list-item-title>Delegate</v-list-item-title>
                 </v-list-item>
-                <v-list-item nuxt-link @click.stop="showRedelegate = true">
-                  <v-list-item-title>Redelegate</v-list-item-title>
-                </v-list-item>
               </v-list>
             </v-menu>
           </td>
@@ -120,7 +117,7 @@
     />
     <dialog-delegate
       v-if="showDelegate"
-      :validator="selected"
+      v-model="selected"
       v-on:cancel="showDelegate = false"
     ></dialog-delegate>
     <dialog-redelegate
@@ -178,7 +175,6 @@ export default {
   methods: {
     onDelegate(validator) {
       this.selected = validator;
-      console.log(this.selected);
       this.showDelegate = true;
     },
     filterValidators(items, query, type) {

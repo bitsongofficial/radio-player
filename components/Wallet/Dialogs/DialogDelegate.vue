@@ -2,10 +2,13 @@
   <v-dialog
     :fullscreen="$vuetify.breakpoint.smAndDown"
     persistent
-    max-width="800"
+    max-width="400"
     :value="true"
   >
-    <staking-delegate v-on:cancel="$emit('cancel')"></staking-delegate>
+    <staking-delegate
+      v-model="value"
+      v-on:cancel="$emit('cancel')"
+    ></staking-delegate>
   </v-dialog>
 </template>
 
@@ -13,6 +16,13 @@
 import StakingDelegate from "@/components/Wallet/Staking/Delegate";
 
 export default {
+  props: {
+    value: {
+      type: Object,
+      required: true
+    }
+  },
+
   components: {
     StakingDelegate
   },
