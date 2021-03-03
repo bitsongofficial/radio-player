@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import PlayerBtnPlay from "@/components/Player/BtnPlay";
 
 export default {
@@ -65,9 +66,9 @@ export default {
     },
   },
   computed: {
-    currentTrack() {
-      return this.$store.getters["player/currentTrack"];
-    },
+    ...mapGetters({
+      currentTrack: 'player/currentTrack'
+    })
   },
 };
 </script>

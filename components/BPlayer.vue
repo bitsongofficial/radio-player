@@ -20,6 +20,7 @@
 import Hls from "hls.js";
 import { Howl } from "howler";
 import { PLAYER_STATUS, toHHMMSS } from "@/lib/utils";
+import { mapActions, mapGetters } from 'vuex';
 
 import PlayerContainer from "@/components/Player/Container";
 import PlayerPicture from "@/components/Player/Picture";
@@ -122,18 +123,20 @@ export default {
   },
 
   computed: {
-    currentTrack() {
-      return this.$store.getters["player/currentTrack"];
-    },
-    paused() {
-      return this.$store.getters["player/paused"];
-    },
-    playing() {
-      return this.$store.getters["player/playing"];
-    }
+    ...mapGetters({
+      currentTrack: 'player/currentTrack',
+      paused: 'player/paused',
+      playing: 'player/playing'
+    })
   },
 
   methods: {
+    ...mapActions({
+      stop: 'player/stop',
+      play: 'player/play',
+      destroy: 'player/destroy'
+    }),
+
     loadAudio() {
       console.log("---- load new track ----");
       this.$store.commit("player/SET_STATUS", PLAYER_STATUS.LOADING);
@@ -170,14 +173,14 @@ export default {
       if (this.provider.html5 !== null) {
         this.provider.html5.stop();
         this.provider.html5 = null;
-        this.$store.dispatch("player/stop");
+        this.stop();
       } else if (this.provider.hls !== null) {
         this.$refs.hlsAudio.pause();
         this.provider.hls.stopLoad();
         this.provider.hls.detachMedia();
         this.provider.hls = null;
         this.currentTime = 0;
-        this.$store.dispatch("player/stop");
+        this.stop();
       }
 
       if (process.env.NODE_ENV === "production") {
@@ -227,14 +230,14 @@ export default {
 
       this.provider.html5.once("load", function() {
         console.log("---- load completed ----");
-        ctx.$store.dispatch("player/play");
+        ctx.play();
       });
 
       this.provider.html5.on("loaderror", function(id, err) {
         console.log("---- load error ----");
         ctx.error = true;
         ctx.currentTime = 0;
-        ctx.$store.dispatch("player/destroy");
+        ctx.destroy();
       });
 
       this.provider.html5.on("playerror", function() {
@@ -260,7 +263,7 @@ export default {
     _handleHlsEvents(evt) {
       switch (evt.type) {
         case "play":
-          this.$store.dispatch("player/play");
+          this.play();
           break;
         case "pause":
           break;

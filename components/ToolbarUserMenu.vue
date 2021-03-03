@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import Jdenticon from "@/components/Jdenticon";
 import DialogWalletAddress from "@/components/Wallet/Dialogs/DialogWalletAddress.vue";
 
@@ -83,8 +84,11 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      toggleDarkTheme: 'app/toggleDarkTheme'
+    }),
     toggleTheme() {
-      this.$store.commit(`app/toggleDarkTheme`);
+      this.toggleDarkTheme()
       this.$vuetify.theme.dark = this.dark_theme;
     },
     onCloseAddress() {
@@ -92,12 +96,10 @@ export default {
     }
   },
   computed: {
-    address() {
-      return this.$store.getters[`wallet/address`];
-    },
-    dark_theme() {
-      return this.$store.getters[`app/dark_theme`];
-    },
+    ...mapGetters({
+      address: 'wallet/address',
+      dark_theme: 'app/dark_theme'
+    }),
     items() {
       return [
         {

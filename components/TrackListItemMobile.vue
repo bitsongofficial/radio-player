@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   props: {
     item: {
@@ -63,8 +65,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setCurrentTrack: 'player/setCurrentTrack'
+    }),
     onClick(item) {
-      this.$store.dispatch(`player/setCurrentTrack`, item.slug);
+      this.setCurrentTrack(item.slug)
     }
   }
 };

@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import PlayerLoading from "@/components/Player/Loading";
 
 export default {
@@ -34,6 +35,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      play: 'player/play',
+      pause: 'player/pause'
+    }),
     onBtnClick() {
       if (!this.playing) {
         this.onPlay();
@@ -43,24 +48,20 @@ export default {
     },
     onPlay() {
       console.log("--- play ---");
-      this.$store.dispatch("player/play");
+      this.play();
     },
     onPause() {
       console.log("--- pause ---");
-      this.$store.dispatch("player/pause");
+      this.pause();
     }
   },
 
   computed: {
-    loading() {
-      return this.$store.getters["player/loading"];
-    },
-    currentTrack() {
-      return this.$store.getters["player/currentTrack"];
-    },
-    playing() {
-      return this.$store.getters["player/playing"];
-    }
+    ...mapGetters({
+      loading: 'player/loading',
+      currentTrack: 'player/currentTrack',
+      playing: 'player/playing'
+    })
   }
 };
 </script>

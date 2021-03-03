@@ -8,11 +8,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 export default {
   methods: {
+    ...mapActions({
+      destroy: 'player/destroy'
+    }),
     onDestroy() {
       console.log("--- destroy ---");
-      this.$store.dispatch("player/destroy");
+      this.destroy();
     }
   }
 };

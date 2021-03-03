@@ -53,6 +53,7 @@
 </style>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import PlayerBtnPlay from "@/components/Player/BtnPlay";
 import TrackImg from "@/components/TrackImg";
 
@@ -72,22 +73,21 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setCurrentTrack: 'player/setCurrentTrack'
+    }),
     onClick(item) {
-      this.$store.dispatch(`player/setCurrentTrack`, item.slug);
+      this.setCurrentTrack(item.slug);
     }
   },
   computed: {
+    ...mapGetters({
+      currentTrack: 'player/currentTrack',
+      isPlaying: 'player/playing',
+      isLoading: 'player/loading'
+    }),
     size() {
       return this.$vuetify.breakpoint.mdAndUp ? 205 : 130;
-    },
-    currentTrack() {
-      return this.$store.getters["player/currentTrack"];
-    },
-    isPlaying() {
-      return this.$store.getters["player/playing"];
-    },
-    isLoading() {
-      return this.$store.getters["player/loading"];
     }
   }
 };

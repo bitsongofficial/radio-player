@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import TrackImg from "@/components/TrackImg";
 
 export default {
@@ -74,8 +75,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setCurrentTrack: 'player/setCurrentTrack'
+    }),
     onClick(item) {
-      this.$store.dispatch(`player/setCurrentTrack`, item.slug);
+      this.setCurrentTrack(item.slug);
     }
   }
 };

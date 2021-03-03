@@ -93,6 +93,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import DialogRadioDetails from "@/components/Radio/DialogRadioDetails.vue";
 
 export default {
@@ -115,8 +116,11 @@ export default {
     };
   },
   methods: {
+    ...mapActions({
+      setCurrentTrack: 'player/setCurrentTrack'
+    }),
     onPlay(item) {
-      this.$store.dispatch(`player/setCurrentTrack`, item.slug);
+      this.setCurrentTrack(item.slug);
     }
   }
 };

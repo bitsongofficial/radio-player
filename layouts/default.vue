@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Toolbar from "@/components/Toolbar";
 import UpdateAvailableDialog from "@/components/UpdateAvailableDialog";
 import BPlayer from "@/components/BPlayer";
@@ -48,9 +49,9 @@ export default {
   },
 
   computed: {
-    currentTrack() {
-      return this.$store.getters["player/currentTrack"];
-    }
+    ...mapGetters({
+      currentTrack: 'player/currentTrack'
+    })
   }
 };
 </script>

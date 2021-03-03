@@ -6,11 +6,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   computed: {
-    currentTrack() {
-      return this.$store.getters["player/currentTrack"];
-    },
+    ...mapGetters({
+      currentTrack: 'player/currentTrack'
+    }),
     title() {
       return this.currentTrack ? this.currentTrack.title : "";
     },

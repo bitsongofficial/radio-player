@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import ToolbarUserMenu from "@/components/ToolbarUserMenu";
 
 export default {
@@ -46,9 +47,9 @@ export default {
   },
 
   computed: {
-    isLoggedIn() {
-      return this.$store.getters[`wallet/isLoggedIn`];
-    }
+    ...mapGetters({
+      isLoggedIn: 'wallet/isLoggedIn'
+    })
   }
 };
 </script>
