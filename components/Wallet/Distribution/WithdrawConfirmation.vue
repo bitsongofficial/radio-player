@@ -10,7 +10,7 @@
     v-on:confirm="$emit('confirm')"
   >
     <template v-slot:fields>
-      <v-list-item>
+      <v-list-item v-for="validator of validators" :key="validator">
         <v-list-item-content>
           <v-list-item-title>{{ validator }}</v-list-item-title>
           <v-list-item-subtitle>Validator</v-list-item-subtitle>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import DialogConfirmation from '@/components/Wallet/Dialogs/DialogConfirmation'
+import DialogConfirmation from "@/components/Wallet/Dialogs/DialogConfirmation";
 
 export default {
   components: {
@@ -41,10 +41,10 @@ export default {
     loading: {
       type: Boolean,
       default() {
-        return false
+        return false;
       }
     },
-    validator: String,
+    validators: Array,
     commission: Boolean,
     memo: String,
     gas_price: [String, Number],
@@ -56,9 +56,9 @@ export default {
           success: false,
           log: null,
           tx_hash: null
-        }
+        };
       }
     }
   }
-}
+};
 </script>

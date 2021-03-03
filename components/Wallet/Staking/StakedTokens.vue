@@ -11,7 +11,7 @@
           outlined
           rounded
           ripple
-          @click.stop="onClaimRewards"
+          @click.stop="onClaimRewards(null)"
         >
           Claim rewards
         </v-btn>
@@ -86,7 +86,7 @@
               </v-btn>
             </template>
             <v-list tile class="py-0">
-              <v-list-item nuxt-link :to="`/radio/radio-station/`">
+              <v-list-item nuxt-link @click.stop="onClaimRewards(item)">
                 <v-list-item-title>Claim rewards</v-list-item-title>
               </v-list-item>
               <v-list-item nuxt-link :to="`/radio/radio-station/`">
@@ -97,6 +97,12 @@
         </template>
       </v-data-table>
     </v-card-text>
+
+    <dialog-distribution
+      v-if="selected"
+      v-model="selected"
+      v-on:cancel="selected = null"
+    ></dialog-distribution>
   </v-card>
 </template>
 
@@ -129,7 +135,8 @@ export default {
         { text: "Commission", value: "commission", align: "right" },
         { text: "", value: "actions", align: "right" }
       ],
-      items: []
+      items: [],
+      selected: null
     };
   },
 
@@ -145,61 +152,30 @@ export default {
     }
   },
 
-  async created() {
-    await this.getStakedTokens(this.address);
-  },
-
   methods: {
-    async getStakedTokens(address) {
-      this.items = [
+    onClaimRewards(val = null) {
+      if (val === null) {
+        this.selected = this.delegations.map(val => {
+          return {
+            description: {
+              moniker: val.validator_name
+            },
+            operator_address: val.validator_address,
+            status: val.status
+          };
+        });
+        return;
+      }
+
+      this.selected = [
         {
-          status: 0,
-          validator: {
-            name: "B-Harvest",
-            address: "emoneyvaloper1zgv6tqess9q6y4cj28ldpjllrqlyzqqh80fpgu"
+          description: {
+            moniker: val.validator_name
           },
-          staked_balance: {
-            amount: "999900000",
-            denom: "NGM"
-          },
-          rewards: 55.718,
-          voting_power: 1.93,
-          details: {
-            commission: {
-              commission_rates: {
-                rate: 0.1,
-                max_rate: 0.5,
-                max_change_rate: 0.4
-              }
-            }
-          }
-        },
-        {
-          status: 2,
-          validator: {
-            name: "Spaceblock",
-            address: "emoneyvaloper1zgv6tqess9q6y4cj28ldpjllrqlyzqqh80fpgu"
-          },
-          staked_balance: {
-            amount: "666100000",
-            denom: "NGM"
-          },
-          rewards: 3.911,
-          voting_power: 1.93,
-          details: {
-            commission: {
-              commission_rates: {
-                rate: 0.1,
-                max_rate: 0.5,
-                max_change_rate: 0.4
-              }
-            }
-          }
+          operator_address: val.validator_address,
+          status: val.status
         }
       ];
-    },
-    onClaimRewards() {
-      this.showModal = true;
     },
     onClaimDialogClose() {
       this.showModal = false;
