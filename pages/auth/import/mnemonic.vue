@@ -12,6 +12,7 @@
             <WalletImportHeader
               subtitle="Enter your mnemonic phrase and type your password"
             />
+            <WalletAlert />
             <v-card-text>
               <v-textarea
                 outlined
@@ -77,12 +78,14 @@
 
 <script>
 import WalletImportHeader from "@/components/Wallet/Common/AuthHeader";
+import WalletAlert from "@/components/Wallet/Common/Alert";
 
 export default {
   layout: "auth",
 
   components: {
-    WalletImportHeader
+    WalletImportHeader,
+    WalletAlert
   },
 
   data() {
