@@ -119,6 +119,7 @@
       v-if="showDelegate"
       v-model="selected"
       v-on:cancel="showDelegate = false"
+      v-on:tx-success="showDelegate = false"
     ></dialog-delegate>
     <dialog-redelegate
       v-if="showRedelegate"

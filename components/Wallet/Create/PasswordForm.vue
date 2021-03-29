@@ -4,6 +4,7 @@
       title="Set up your crypto wallet"
       subtitle="Type a strong and secure password"
     />
+    <WalletAlert />
     <v-card-text>
       <validation-provider
         vid="password"
@@ -78,10 +79,12 @@
 
 <script>
 import WalletHeader from "@/components/Wallet/Common/AuthHeader";
+import WalletAlert from "@/components/Wallet/Common/Alert";
 
 export default {
   components: {
-    WalletHeader
+    WalletHeader,
+    WalletAlert
   },
   data() {
     return {
@@ -94,11 +97,7 @@ export default {
   methods: {
     async onContinue() {
       try {
-        await this.$store.dispatch(
-          `wallet/createAccountWithMnemonic`,
-          this.password
-        );
-        this.$emit("onContinue");
+        this.$emit("onContinue", this.password);
       } catch (err) {
         console.error(err);
       }

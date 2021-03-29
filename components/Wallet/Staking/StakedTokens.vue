@@ -89,9 +89,6 @@
               <v-list-item nuxt-link @click.stop="onClaimRewards(item)">
                 <v-list-item-title>Claim rewards</v-list-item-title>
               </v-list-item>
-              <v-list-item nuxt-link :to="`/radio/radio-station/`">
-                <v-list-item-title>Unbond</v-list-item-title>
-              </v-list-item>
             </v-list>
           </v-menu>
         </template>

@@ -10,7 +10,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@bitsongofficial/js-sdk": "https://github.com/bitsongofficial/js-sdk#v0.6.0-dev",
+    "@bitsongofficial/js-sdk": "./bitsongofficial-js-sdk-0.6.0-dev.tgz",
     "@chenfengyuan/vue-qrcode": "^1.0.2",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/device": "^1.2.7",

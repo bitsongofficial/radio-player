@@ -6,13 +6,7 @@
 
     <v-card-actions class="py-6">
       <v-spacer></v-spacer>
-      <v-btn v-if="!downloaded" @click="onContinue" text>Skip</v-btn>
-      <v-btn v-if="!downloaded" color="primary" @click="onDownload"
-        >Download Keystore file</v-btn
-      >
-      <v-btn v-if="downloaded" color="primary" @click="onContinue"
-        >Go to BitSong</v-btn
-      >
+      <v-btn color="primary" @click="onContinue">Go to BitSong</v-btn>
     </v-card-actions>
   </div>
 </template>
@@ -22,30 +16,26 @@ import WalletHeader from "@/components/Wallet/Common/AuthHeader";
 import Markup from "@/components/Wallet/Common/Markup";
 
 export default {
+  props: {
+    privateKey: {
+      type: String,
+      required: true
+    }
+  },
+
   components: {
     WalletHeader,
     Markup
   },
-  data() {
-    return {
-      downloaded: false
-    };
-  },
+
   computed: {
     address() {
       return this.$store.getters[`wallet/address`];
-    },
-    privateKey() {
-      return this.$store.getters[`wallet/privateKey`];
     }
   },
+
   methods: {
-    async onDownload() {
-      await this.$store.dispatch(`wallet/generateAndDownloadKeyStore`);
-      this.downloaded = true;
-    },
     onContinue() {
-      this.downloaded = false;
       this.$emit("onContinue");
     }
   }

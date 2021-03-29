@@ -25,6 +25,14 @@
         :coin="form.coin"
         v-on:update:amount="form.amount = $event"
       ></input-amount>
+
+      <v-text-field
+        v-model="form.password"
+        autocomplete="off"
+        placeholder="Password"
+        class="col-12"
+        type="password"
+      ></v-text-field>
     </template>
 
     <template v-slot:actions>
@@ -54,6 +62,7 @@
 
 <script>
 import { Coin, Fee } from "@bitsongofficial/js-sdk";
+import CryptoJS from "crypto-js";
 
 import { convertMacroToMicroAmount, parseErrorResponse } from "@/lib/utils";
 import StakingDelegateConfirmation from "@/components/Wallet/Staking/DelegateConfirmation";
@@ -80,7 +89,8 @@ export default {
       amount: "",
       memo: "",
       gas_price: 0,
-      gas_limit: 0
+      gas_limit: 0,
+      password: null
     },
     response: {
       success: false,
@@ -105,7 +115,8 @@ export default {
       return (
         this.form.validator === null &&
         this.form.coin === null &&
-        this.form.amount === ""
+        this.form.amount === "" &&
+        this.form.password === null
       );
     },
     address() {
@@ -150,13 +161,25 @@ export default {
           String(this.form.gas_limit)
         );
 
+        const decryptPk = await CryptoJS.AES.decrypt(
+          this.$store.getters["wallet/privateKey"],
+          this.form.password
+        );
+        await this.$client.setAccountInfo(
+          this.$store.getters["wallet/address"]
+        );
+        this.$client.setPrivateKey(decryptPk.toString(CryptoJS.enc.Utf8));
+
         const response = await this.$client.delegate(
           this.value.operator_address,
           amount,
           this.form.memo,
           fee
         );
+
         this.response = parseErrorResponse(response);
+
+        this.$store.dispatch("staking/getDelegations");
 
         this.$emit("txSuccess");
       } catch (e) {
@@ -166,9 +189,11 @@ export default {
         } else {
           this.response.log = `Something went wrong!`;
         }
+      } finally {
+        this.form.password = null;
+        this.$client.setPrivateKey(null);
+        this.loadingModal = false;
       }
-
-      this.loadingModal = false;
     }
   }
 };

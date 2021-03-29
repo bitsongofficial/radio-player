@@ -8,6 +8,7 @@
     <staking-delegate
       v-model="value"
       v-on:cancel="$emit('cancel')"
+      v-on:tx-success="$emit('tx-success')"
     ></staking-delegate>
   </v-dialog>
 </template>

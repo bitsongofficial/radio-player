@@ -2,7 +2,7 @@
   <v-dialog
     :fullscreen="$vuetify.breakpoint.smAndDown"
     persistent
-    max-width="800"
+    max-width="400"
     :value="true"
   >
     <card-msg
@@ -18,21 +18,28 @@
     >
       <template v-slot:fields>
         <input-address
-          class="col-12 col-md-6"
+          class="col-12"
           v-model="form.to_address"
           v-on:update:address="form.to_address = $event"
         ></input-address>
         <input-coin
-          class="col-12 col-md-3"
+          class="col-6"
           v-model="form.coin"
           v-on:update:coin="form.coin = $event"
         ></input-coin>
         <input-amount
-          class="col-12 col-md-3"
+          class="col-6"
           v-model="form.amount"
           :coin="form.coin"
           v-on:update:amount="form.amount = $event"
         ></input-amount>
+        <v-text-field
+          v-model="form.password"
+          autocomplete="off"
+          placeholder="Password"
+          class="col-12"
+          type="password"
+        ></v-text-field>
       </template>
 
       <template v-slot:actions>
@@ -62,13 +69,11 @@
 </template>
 
 <script>
-import { Coin, Fee } from '@bitsongofficial/js-sdk'
+import { Coin, Fee } from "@bitsongofficial/js-sdk";
+import CryptoJS from "crypto-js";
 
-import {
-  convertMacroToMicroAmount,
-  parseErrorResponse
-} from '@/lib/utils'
-import BankSendConfirmation from '@/components/Wallet/Bank/SendConfirmation'
+import { convertMacroToMicroAmount, parseErrorResponse } from "@/lib/utils";
+import BankSendConfirmation from "@/components/Wallet/Bank/SendConfirmation";
 
 export default {
   components: {
@@ -85,53 +90,55 @@ export default {
       tx_hash: null
     },
     form: {
-      to_address: '',
+      to_address: "",
       coin: null,
-      amount: '',
-      memo: '',
+      amount: "",
+      memo: "",
       gas_price: 0,
-      gas_limit: 0
+      gas_limit: 0,
+      password: null
     }
   }),
 
   created() {
-    this.form.gas_price = this.$store.getters['app/gas_price']
-    this.form.gas_limit = this.$store.getters['app/gas_limit']
+    this.form.gas_price = this.$store.getters["app/gas_price"];
+    this.form.gas_limit = this.$store.getters["app/gas_limit"];
   },
 
   computed: {
     disabled() {
       return (
-        this.form.to_address === '' ||
+        this.form.to_address === "" ||
         this.form.coin === null ||
-        this.form.amount === ''
-      )
+        this.form.amount === "" ||
+        this.form.password === null
+      );
     },
     address() {
-      return this.$store.getters[`wallet/address`]
+      return this.$store.getters[`wallet/address`];
     },
     decimals() {
-      return this.$store.getters['app/decimals']
+      return this.$store.getters["app/decimals"];
     }
   },
   methods: {
     onSend() {
-      this.showModal = true
+      this.showModal = true;
     },
     onCancel() {
-      this.showModal = false
-      this.resetResponse()
+      this.showModal = false;
+      this.resetResponse();
     },
     resetResponse() {
       this.response = {
         success: false,
         log: null,
         tx_hash: null
-      }
+      };
     },
     async onConfirm() {
-      this.resetResponse()
-      this.loadingModal = true
+      this.resetResponse();
+      this.loadingModal = true;
 
       try {
         const amount = [
@@ -139,37 +146,48 @@ export default {
             String(convertMacroToMicroAmount(this.form.amount, this.decimals)),
             this.form.coin.toLowerCase()
           )
-        ]
+        ];
 
         const fee = new Fee(
           [
             new Coin(
               String(this.form.gas_price * this.form.gas_limit),
-              this.$store.getters['app/micro_stake_denom'].toLowerCase()
+              this.$store.getters["app/micro_stake_denom"].toLowerCase()
             )
           ],
           String(this.form.gas_limit)
-        )
+        );
+
+        const decryptPk = await CryptoJS.AES.decrypt(
+          this.$store.getters["wallet/privateKey"],
+          this.form.password
+        );
+        await this.$client.setAccountInfo(
+          this.$store.getters["wallet/address"]
+        );
+        this.$client.setPrivateKey(decryptPk.toString(CryptoJS.enc.Utf8));
 
         const response = await this.$client.send(
           this.form.to_address,
           amount,
           this.form.memo,
           fee
-        )
-        this.response = parseErrorResponse(response)
-        this.$emit('close')
+        );
+        this.response = parseErrorResponse(response);
+        this.$emit("close");
       } catch (e) {
         if (e !== undefined) {
-          console.error(e)
-          this.response.log = e.message
+          console.error(e);
+          this.response.log = e.message;
         } else {
-          this.response.log = `Something went wrong!`
+          this.response.log = `Something went wrong!`;
         }
+      } finally {
+        this.form.password = null;
+        this.$client.setPrivateKey(null);
+        this.loadingModal = false;
       }
-
-      this.loadingModal = false
     }
   }
-}
+};
 </script>

@@ -2,22 +2,26 @@
   <v-card :loading="loading" :disabled="loading">
     <v-window v-model="step" class="ma-6">
       <v-window-item>
-        <WalletCreatePasswordForm v-on:onContinue="step = 1" />
+        <WalletCreatePasswordForm v-on:onContinue="onPasswordCreated" />
       </v-window-item>
       <v-window-item>
         <WalletCreateSeedAlert v-on:onContinue="step = 2" />
       </v-window-item>
       <v-window-item>
-        <WalletCreateSeedView v-on:onContinue="step = 3" />
+        <WalletCreateSeedView :seed="seed" v-on:onContinue="step = 3" />
       </v-window-item>
       <v-window-item>
         <WalletCreateSeedConfirmation
-          v-on:onContinue="step = 4"
-          v-on:onGoBack="step = 2"
+          :seed="seed"
+          v-on:onContinue="onSeedConfirmed"
+          v-on:onGoBack="step = 1"
         />
       </v-window-item>
       <v-window-item>
-        <WalletCreateAddressView v-on:onContinue="walletCreated" />
+        <WalletCreateAddressView
+          :private-key="privateKey"
+          v-on:onContinue="walletCreated"
+        />
       </v-window-item>
     </v-window>
   </v-card>
@@ -46,7 +50,10 @@ export default {
   },
   data() {
     return {
-      step: 0
+      step: 0,
+      password: null,
+      seed: null,
+      privateKey: null
     };
   },
   methods: {
@@ -54,6 +61,21 @@ export default {
       // await this.$store.dispatch("bank/updateBalance");
       // this.$store.dispatch("bank/subscribe");
       this.$router.push("/");
+    },
+    onPasswordCreated(password) {
+      const { mnemonic, privateKey } = this.$client.createAccountWithMneomnic();
+
+      this.password = password;
+      this.seed = mnemonic;
+      this.privateKey = privateKey;
+      this.step = 1;
+    },
+    async onSeedConfirmed() {
+      await this.$store.dispatch(`wallet/recoverAccountFromMnemonic`, {
+        mnemonic: this.seed,
+        password: this.password
+      });
+      this.step = 4;
     }
   }
 };

@@ -22,12 +22,14 @@ export default {
     LCD: process.env.LCD || `http://localhost:1317`,
     ADDRESS_PREFIX: process.env.ADDRESS_PREFIX || `bitsong`,
     ADDRESS_LENGTH: process.env.ADDRESS_LENGTH || 46,
-    HD_PATH: process.env.HD_PATH || `44'/118'/0'/0/`,
+    ADDRESS_REGEX: process.env.ADDRESS_REGEX || `^(bitsong1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$`,
+    HD_PATH: process.env.HD_PATH || `44'/639'/0'/0/`,
     DECIMALS: process.env.DECIMALS || 6,
     DEFAULT_GAS_PRICE: process.env.DEFAULT_GAS_PRICE || 0.25,
     DEFAULT_GAS_LIMIT: process.env.DEFAULT_GAS_LIMIT || 200000,
-    SOCKET: process.env.SOCKET || `wss://rpc.testnet4.bitsong.network/websocket`,
-    CHAIN_ID: process.env.CHAIN_ID || `bitsong-testnet-4`
+    SOCKET: process.env.SOCKET || `wss://explorebitsong.com/websocket`,
+    CHAIN_ID: process.env.CHAIN_ID || `bitsong-testnet-5`,
+    URL_ACCOUNT_EXPLORER: process.env.URL_ACCOUNT_EXPLORER || `https://explorebitsong.com`
   },
   /*
    ** Nuxt rendering mode

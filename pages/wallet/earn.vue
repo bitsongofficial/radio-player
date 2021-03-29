@@ -15,10 +15,8 @@ export default {
     AvailableValidators
   },
 
-  computed: {
-    address() {
-      return this.$store.getters[`wallet/address`];
-    }
+  created() {
+    this.$store.dispatch(`staking/getDelegations`);
   }
 };
 </script>

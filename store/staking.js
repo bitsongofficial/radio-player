@@ -83,7 +83,7 @@ export const actions = {
 
       let delegations = await this.$btsg.getDelegations(address)
       const rewards = await this.$btsg.getDelegatorRewards(address)
-      console.log(rewards)
+
       delegations = delegations
         .sort((a, b) => {
           return b.shares - a.shares

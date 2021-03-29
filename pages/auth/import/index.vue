@@ -4,6 +4,7 @@
       <v-col cols="12" sm="8" md="3">
         <v-card class="pa-6">
           <WalletImportHeader title="Import your crypto wallet" />
+          <WalletAlert />
           <v-list-item-group class="pt-2">
             <v-list-item
               v-for="(method, i) in methods"
@@ -37,22 +38,19 @@
 
 <script>
 import WalletImportHeader from "@/components/Wallet/Common/AuthHeader";
+import WalletAlert from "@/components/Wallet/Common/Alert";
 
 export default {
   layout: "auth",
 
   components: {
-    WalletImportHeader
+    WalletImportHeader,
+    WalletAlert
   },
 
   data() {
     return {
       methods: [
-        {
-          icon: "mdi-file-key-outline",
-          label: "Keystore file",
-          to: "/auth/import/keystore"
-        },
         {
           icon: "mdi-shield-key-outline",
           label: "Mnemonic phrase",

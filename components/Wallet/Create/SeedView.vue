@@ -32,6 +32,14 @@ import WalletHeader from "@/components/Wallet/Common/AuthHeader";
 import Markup from "@/components/Wallet/Common/Markup";
 
 export default {
+  props: {
+    seed: {
+      type: String,
+      default: null,
+      required: true
+    }
+  },
+
   components: {
     WalletHeader,
     Markup
@@ -42,9 +50,6 @@ export default {
     };
   },
   computed: {
-    seed() {
-      return this.$store.getters[`wallet/mnemonic`];
-    },
     canContinue() {
       return !this.agreement;
     }

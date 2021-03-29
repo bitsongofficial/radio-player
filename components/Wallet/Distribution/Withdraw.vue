@@ -17,6 +17,14 @@
           :value="validator"
         ></validator-overview>
       </template>
+
+      <v-text-field
+        v-model="form.password"
+        autocomplete="off"
+        placeholder="Password"
+        class="col-12"
+        type="password"
+      ></v-text-field>
     </template>
 
     <template v-slot:actions>
@@ -45,6 +53,7 @@
 
 <script>
 import { Coin, Fee } from "@bitsongofficial/js-sdk";
+import CryptoJS from "crypto-js";
 
 import { parseErrorResponse } from "@/lib/utils";
 import DistributionWithdrawConfirmation from "@/components/Wallet/Distribution/WithdrawConfirmation";
@@ -70,7 +79,8 @@ export default {
       commission: false,
       memo: "",
       gas_price: 0,
-      gas_limit: 0
+      gas_limit: 0,
+      password: null
     },
     response: {
       success: false,
@@ -142,6 +152,15 @@ export default {
           msgs.push(msg);
         }
 
+        const decryptPk = await CryptoJS.AES.decrypt(
+          this.$store.getters["wallet/privateKey"],
+          this.form.password
+        );
+        await this.$client.setAccountInfo(
+          this.$store.getters["wallet/address"]
+        );
+        this.$client.setPrivateKey(decryptPk.toString(CryptoJS.enc.Utf8));
+
         const signedTx = await this.$client.buildTransaction(
           msgs,
           this.form.memo,
@@ -159,9 +178,13 @@ export default {
         } else {
           this.response.log = `Something went wrong!`;
         }
-      }
+      } finally {
+        this.$store.dispatch(`staking/getDelegations`);
 
-      this.loadingModal = false;
+        this.form.password = null;
+        this.$client.setPrivateKey(null);
+        this.loadingModal = false;
+      }
     }
   }
 };

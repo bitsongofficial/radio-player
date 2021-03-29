@@ -9,7 +9,7 @@
       <v-textarea
         outlined
         label="Type your seed phrase here"
-        v-model="seed"
+        v-model="confirmedSeed"
       ></v-textarea>
     </v-card-text>
     <v-card-actions class="pb-6">
@@ -30,17 +30,24 @@
 import WalletHeader from "@/components/Wallet/Common/AuthHeader";
 
 export default {
+  props: {
+    seed: {
+      type: String,
+      required: true
+    }
+  },
+
   components: {
     WalletHeader
   },
   data() {
     return {
-      seed: ""
+      confirmedSeed: ""
     };
   },
   computed: {
     canContinue() {
-      return !(this.seed === this.$store.getters[`wallet/mnemonic`]);
+      return !(this.seed === this.confirmedSeed);
     }
   },
   methods: {

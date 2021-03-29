@@ -1,4 +1,5 @@
 import { sleep } from '@/lib/utils'
+import CryptoJS from 'crypto-js'
 
 export const state = () => ({
   loading: false,
@@ -31,9 +32,9 @@ export const mutations = {
   toggleLoading: (state) => {
     state.loading = !state.loading
   },
-  addWallet: (state, { mnemonic, privateKey, password, address }) => {
+  addWallet: async (state, { privateKey, address }) => {
     state.wallets.push({
-      mnemonic, privateKey, password, address
+      privateKey, address
     })
   },
   delWallet: (state, index) => {
@@ -51,26 +52,26 @@ export const actions = {
   async createAccountWithMnemonic({
     commit, state, dispatch
   }, password) {
-    try {
-      commit(`toggleLoading`)
-      await sleep(200)
+    // try {
+    //   commit(`toggleLoading`)
+    //   await sleep(200)
 
-      const { address, mnemonic, privateKey } = this.$client.createAccountWithMneomnic()
-      commit(`addWallet`, {
-        address, mnemonic, privateKey, password
-      })
+    //   const { address, mnemonic, privateKey } = this.$client.createAccountWithMneomnic()
+    //   commit(`addWallet`, {
+    //     address, mnemonic, privateKey, password
+    //   })
 
-      const i = state.wallets.findIndex(w => w.address === address)
-      commit(`connect`, i)
+    //   const i = state.wallets.findIndex(w => w.address === address)
+    //   commit(`connect`, i)
 
-      dispatch('bank/updateBalance', null, { root: true })
-      dispatch('bank/subscribe', null, { root: true })
+    //   dispatch('bank/updateBalance', null, { root: true })
+    //   dispatch('bank/subscribe', null, { root: true })
 
-      commit(`toggleLoading`)
-    } catch (e) {
-      commit(`toggleLoading`)
-      console.error(e)
-    }
+    //   commit(`toggleLoading`)
+    // } catch (e) {
+    //   commit(`toggleLoading`)
+    //   console.error(e)
+    // }
   },
   async generateAndDownloadKeyStore({
     commit,
@@ -98,8 +99,12 @@ export const actions = {
       await sleep(200)
 
       const { address } = this.$client.recoverAccountFromPrivateKey(privateKey)
+
+      const pkEncrypted = CryptoJS.AES.encrypt(privateKey, password)
+
       commit(`addWallet`, {
-        address, privateKey, password
+        address,
+        privateKey: pkEncrypted.toString()
       })
 
       const i = state.wallets.findIndex(w => w.address === address)
@@ -126,12 +131,21 @@ export const actions = {
       commit(`toggleLoading`)
       await sleep(200)
 
+      // const encrypted = CryptoJS.AES.encrypt(mnemonic, password)
+      // const decrypted = CryptoJS.AES.decrypt(encrypted, password)
+      // console.log(encrypted)
+      // console.log(decrypted.toString(CryptoJS.enc.Utf8))
+
       const {
         privateKey,
         address
       } = this.$client.recoverAccountFromMnemonic(mnemonic)
+
+      const pkEncrypted = CryptoJS.AES.encrypt(privateKey, password)
+
       commit(`addWallet`, {
-        mnemonic, address, privateKey, password
+        address,
+        privateKey: pkEncrypted.toString()
       })
 
       const i = state.wallets.findIndex(w => w.address === address)

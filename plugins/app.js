@@ -35,7 +35,7 @@ export default async (ctx, inject) => {
   // set account
   if (ctx.app.store.getters['wallet/address'] !== null) {
     try {
-      await client.setAccountInfo(ctx.app.store.getters['wallet/privateKey'])
+      await client.setAccountInfo(ctx.app.store.getters['wallet/address'])
 
       await ctx.app.store.dispatch(`bank/updateBalance`)
       ctx.app.store.dispatch(`bank/subscribe`)

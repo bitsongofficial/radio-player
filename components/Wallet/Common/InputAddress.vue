@@ -76,9 +76,7 @@ export default {
     rulesRecipient() {
       return {
         required: true,
-        regex: new RegExp(`^${this.address_prefix}1`),
-        max: this.address_length,
-        min: this.address_length
+        regex: new RegExp(process.env.ADDRESS_REGEX)
       };
     }
   }
