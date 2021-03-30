@@ -1,8 +1,8 @@
 <template>
   <v-container fluid>
     <proposal-details :id="id" />
-    <proposal-votes-detail :id="id" class="my-5" />
-    <depositors :id="id" />
+    <proposal-votes-detail v-if="false" :id="id" class="my-5" />
+    <depositors v-if="false" :id="id" />
   </v-container>
 </template>
 
