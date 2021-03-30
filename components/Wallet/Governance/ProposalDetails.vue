@@ -2,17 +2,27 @@
   <v-card v-if="proposal">
     <v-card-title>
       <v-row>
-        <v-col cols="10">
+        <v-col md="10" cols="12">
           <h2 class="headline font-weight-regular">
-            {{ `#${proposal.proposal_id}` }}
+            {{ `#${proposal.proposal_id}` }} - {{ proposal.title }}
           </h2>
-          <h3 class="headline font-weight-regular">{{ proposal.title }}</h3>
         </v-col>
-        <v-col cols="2" class="d-flex flex-row-reverse">
+        <v-col md="2" cols="12" class="d-flex flex-row-reverse">
           <v-chip
-            :color="proposal.proposal_status === 'Passed' ? 'green' : 'red'"
+            v-if="proposal.proposal_status === 'Passed'"
+            color="green"
             outlined
           >
+            <status-with-dot :status="proposal.proposal_status" />
+          </v-chip>
+          <v-chip
+            v-if="proposal.proposal_status === 'VotingPeriod'"
+            color="primary"
+            outlined
+          >
+            <status-with-dot :status="proposal.proposal_status" />
+          </v-chip>
+          <v-chip v-else color="red" outlined>
             <status-with-dot :status="proposal.proposal_status" />
           </v-chip>
         </v-col>

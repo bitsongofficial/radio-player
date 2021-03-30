@@ -30,7 +30,7 @@
         <template v-slot:item.validator="{ item }">
           <a
             class="caption-1"
-            :href="`${explorerUrl}/earn/${item.validator_address}`"
+            :href="`${explorerUrl}/staking/${item.validator_address}`"
           >
             <v-flex class="d-flex flex-row align-center">
               <validator-avatar

@@ -1,6 +1,11 @@
 <template>
   <div>
-    <span :class="capitalizedStatus === 'Passed' ? 'green' : 'red'" class="dot"></span>
+    <span v-if="capitalizedStatus === 'Passed'" class="green dot"></span>
+    <span
+      v-if="capitalizedStatus === 'VotingPeriod'"
+      class="primary dot"
+    ></span>
+    <span v-else class="red dot"></span>
     <span>{{ capitalizedStatus }}</span>
   </div>
 </template>
@@ -9,7 +14,7 @@
 import { captialize } from "@/lib/utils";
 
 export default {
-  name: 'status-with-dot',
+  name: "status-with-dot",
 
   props: {
     status: {
@@ -19,20 +24,19 @@ export default {
   },
 
   computed: {
-    capitalizedStatus () {
-      return captialize(this.status)
+    capitalizedStatus() {
+      return captialize(this.status);
     }
   }
-
-}
+};
 </script>
 
 <style scoped>
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 5px;
-    display: inline-flex;
-  }
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  display: inline-flex;
+}
 </style>

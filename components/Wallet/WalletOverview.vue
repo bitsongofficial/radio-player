@@ -18,10 +18,10 @@
           </div>
           <v-container class="pa-0">
             <v-row>
-              <v-col cols="10" class="py-0">
+              <v-col md="10" cols="12" class="py-0">
                 <markup :content="address"></markup>
               </v-col>
-              <v-col cols="2" class="pt-0">
+              <v-col md="2" cols="12" class="pt-0">
                 <v-flex class="d-flex flex-row flex-md-column">
                   <v-btn icon @click.stop="showAddress = true">
                     <v-icon>mdi-qrcode-scan</v-icon>

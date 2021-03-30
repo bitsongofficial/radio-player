@@ -4,14 +4,14 @@
       <v-card-text>
         <v-flex>
           <v-row>
-            <v-col cols="1" align="center" justify="center">
+            <v-col md="1" cols="2" align="center" justify="center">
               <v-img
                 height="30"
                 width="30"
                 src="/bitsong_logo_circle_red.svg"
               ></v-img>
             </v-col>
-            <v-col cols="4" class="element-card flex-col-start">
+            <v-col md="4" cols="10" class="element-card flex-col-start">
               <amount
                 style="font-size: 1.3em;"
                 class="my-auto"
@@ -19,7 +19,12 @@
                 :denom="coin.denom"
               />
             </v-col>
-            <v-col cols="4" align="start" class="justify-start flex-column">
+            <v-col
+              md="4"
+              cols="8"
+              align="start"
+              class="justify-start flex-column"
+            >
               <amount
                 style="font-size: 1.3em"
                 :micro-amount="price * coin.amount"
@@ -37,7 +42,8 @@
               </div>-->
             </v-col>
             <v-col
-              cols="3"
+              md="3"
+              cols="4"
               align="start"
               justify="start"
               class="flex-col-start"
