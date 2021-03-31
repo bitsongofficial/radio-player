@@ -11,7 +11,7 @@
   >
     <track-img
       :picture="item.picture"
-      :streamUrl="item.stream_url"
+      :slug="item.slug"
       v-on:select="onClick(item)"
     ></track-img>
 

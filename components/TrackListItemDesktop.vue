@@ -4,7 +4,7 @@
       :size="32"
       :size-btn="25"
       :picture="item.picture"
-      :streamUrl="item.stream_url"
+      :slug="item.slug"
       class="mr-4"
       v-if="item.picture"
       v-on:select="onClick(item)"

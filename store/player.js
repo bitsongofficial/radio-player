@@ -43,7 +43,10 @@ export const actions = {
   async setCurrentTrack({ commit }, payload) {
     try {
       const radio = await this.$api.getRadioStreamBySlug(payload)
-      commit('SET_CURRENT_TRACK', radio.data)
+      commit('SET_CURRENT_TRACK', {
+        ...radio.data,
+        slug: payload
+      })
     } catch (e) {
       console.error(e)
     }

@@ -44,7 +44,7 @@
                 <v-list-item-title
                   >{{ gas_price }}
                   {{
-                    $store.getters['app/micro_stake_denom'].toLowerCase()
+                    $store.getters["app/micro_stake_denom"].toLowerCase()
                   }}</v-list-item-title
                 >
                 <v-list-item-subtitle>Gas price</v-list-item-subtitle>
@@ -97,7 +97,7 @@
               <div class="px-8 mt-2">
                 <a
                   :href="
-                    `https://testnet.explorebitsong.com/transactions/${response.tx_hash}`
+                    `https://explorebitsong.com/transactions/${response.tx_hash}`
                   "
                   target="_blank"
                   >{{ response.tx_hash }}</a
@@ -122,7 +122,7 @@ export default {
     loading: {
       type: Boolean,
       default() {
-        return false
+        return false;
       }
     },
     title: String,
@@ -133,32 +133,32 @@ export default {
           success: false,
           log: null,
           tx_hash: null
-        }
+        };
       }
     },
     memo: String,
     gas_price: {
       type: [String, Number],
       default() {
-        return this.$store.getters['app/gas_price']
+        return this.$store.getters["app/gas_price"];
       }
     },
     gas_limit: {
       type: [String, Number],
       default() {
-        return this.$store.getters['app/gas_limit']
+        return this.$store.getters["app/gas_limit"];
       }
     }
   },
   data() {
     return {
       advanced: false
-    }
+    };
   },
   computed: {
     networkFee() {
-      return this.gas_price * this.gas_limit
+      return this.gas_price * this.gas_limit;
     }
   }
-}
+};
 </script>

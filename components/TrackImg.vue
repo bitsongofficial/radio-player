@@ -1,7 +1,7 @@
 <template>
   <v-img
     :gradient="
-      currentTrack !== null && currentTrack.source === streamUrl
+      currentTrack !== null && currentTrack.slug === slug
         ? 'to bottom, rgba(0,0,0,.2), rgba(0,0,0,.6)'
         : ''
     "
@@ -15,7 +15,7 @@
       class="fill-height ma-0"
       align="center"
       justify="center"
-      v-if="currentTrack !== null && currentTrack.source === streamUrl"
+      v-if="currentTrack !== null && currentTrack.slug === slug"
     >
       <player-btn-play :size="sizeBtn"></player-btn-play>
     </v-row>
@@ -37,37 +37,37 @@ export default {
   props: {
     picture: {
       type: String,
-      default: "",
+      default: ""
     },
-    streamUrl: {
+    slug: {
       type: String,
-      default: "",
+      default: ""
     },
     size: {
       type: Number,
       default() {
         return this.$vuetify.breakpoint.mdAndUp ? 205 : 150;
-      },
+      }
     },
     sizeBtn: {
       type: [String, Number],
-      default: "60",
-    },
+      default: "60"
+    }
   },
 
   components: {
-    PlayerBtnPlay,
+    PlayerBtnPlay
   },
 
   methods: {
     onClick() {
       this.$emit("select");
-    },
+    }
   },
   computed: {
     currentTrack() {
       return this.$store.getters["player/currentTrack"];
-    },
-  },
+    }
+  }
 };
 </script>
