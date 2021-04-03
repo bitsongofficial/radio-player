@@ -11,7 +11,7 @@
       </h2>
     </div>
 
-    <genres class="mb-8"></genres>
+    <genres :items="genres" class="mb-8"></genres>
     <template v-for="country in countries">
       <track-grid-featured
         :key="country.country"
@@ -60,10 +60,11 @@ export default {
   },
 
   async created() {
-    const explore = await this.$api.getByExplore();
+    const genres = await this.$api.getGenres();
+    this.genres = genres;
 
-    this.countries = explore.countries;
-    this.genres = explore.genres;
+    const countries = await this.$api.getExploreCountries();
+    this.countries = countries;
   }
 };
 </script>

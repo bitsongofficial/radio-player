@@ -19,6 +19,7 @@
       </template>
 
       <v-text-field
+        v-if="$store.getters['wallet/type'] === 'localWallet'"
         v-model="form.password"
         autocomplete="off"
         placeholder="Password"
@@ -55,7 +56,9 @@
 import { Coin, Fee } from "@bitsongofficial/js-sdk";
 import CryptoJS from "crypto-js";
 
-import { parseErrorResponse } from "@/lib/utils";
+import { SigningCosmosClient, coins } from "@cosmjs/launchpad";
+
+import { parseErrorResponse, parseErrorResponseKeplr } from "@/lib/utils";
 import DistributionWithdrawConfirmation from "@/components/Wallet/Distribution/WithdrawConfirmation";
 
 export default {
@@ -109,13 +112,22 @@ export default {
     }
   },
   methods: {
-    onSend() {
-      this.showModal = true;
+    async onSend() {
+      switch (this.$store.getters["wallet/type"]) {
+        case "localWallet":
+          this.showModal = true;
+          break;
+        case "keplrWallet":
+          await this.keplrWalletWithdraw();
+          break;
+      }
     },
+
     onCancel() {
       this.showModal = false;
       this.resetResponse();
     },
+
     resetResponse() {
       this.response = {
         success: false,
@@ -123,6 +135,66 @@ export default {
         tx_hash: null
       };
     },
+
+    async keplrWalletWithdraw() {
+      this.resetResponse();
+      this.loading = true;
+
+      try {
+        await window.keplr.enable(process.env.CHAIN_ID);
+
+        const offlineSigner = await window.getOfflineSigner(
+          process.env.CHAIN_ID
+        );
+
+        const cosmJS = new SigningCosmosClient(
+          process.env.LCD,
+          this.$store.getters["wallet/address"],
+          offlineSigner
+        );
+
+        let msgs = [];
+
+        for (const validator of this.value) {
+          const msg = {
+            type: "cosmos-sdk/MsgWithdrawDelegationReward",
+            value: {
+              delegator_address: this.address,
+              validator_address: validator.operator_address
+            }
+          };
+          msgs.push(msg);
+        }
+
+        const fee = {
+          amount: coins(
+            this.form.gas_price * this.form.gas_limit,
+            this.$store.getters["app/micro_stake_denom"].toLowerCase()
+          ),
+          gas: this.form.gas_limit
+        };
+
+        const response = await cosmJS.signAndBroadcast(msgs, fee);
+        this.response = parseErrorResponseKeplr(response);
+
+        this.showModal = true;
+
+        this.$store.dispatch("staking/getDelegations");
+
+        this.$emit("txSuccess");
+      } catch (e) {
+        if (e !== undefined) {
+          console.error(e);
+          this.response.log = e.message;
+        } else {
+          this.response.log = `Something went wrong!`;
+        }
+      } finally {
+        this.form.password = null;
+        this.loading = false;
+      }
+    },
+
     async onConfirm() {
       this.resetResponse();
       this.loadingModal = true;
@@ -169,6 +241,8 @@ export default {
 
         const response = await this.$client.broadcast(signedTx);
         this.response = parseErrorResponse(response);
+
+        this.$store.dispatch("staking/getDelegations");
 
         this.$emit("txSuccess");
       } catch (e) {

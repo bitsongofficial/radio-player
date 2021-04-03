@@ -17,6 +17,9 @@ export const getters = {
   address: state => {
     return state.selectedWallet === null ? null : state.wallets[state.selectedWallet].address
   },
+  type: state => {
+    return state.selectedWallet === null ? null : state.wallets[state.selectedWallet].type
+  },
   privateKey: state => {
     return state.selectedWallet === null ? '' : state.wallets[state.selectedWallet].privateKey
   },
@@ -32,9 +35,9 @@ export const mutations = {
   toggleLoading: (state) => {
     state.loading = !state.loading
   },
-  addWallet: async (state, { privateKey, address }) => {
+  addWallet: async (state, { type, privateKey, address }) => {
     state.wallets.push({
-      privateKey, address
+      type, privateKey, address
     })
   },
   delWallet: (state, index) => {
@@ -103,6 +106,7 @@ export const actions = {
       const pkEncrypted = CryptoJS.AES.encrypt(privateKey, password)
 
       commit(`addWallet`, {
+        type: 'localWallet',
         address,
         privateKey: pkEncrypted.toString()
       })
@@ -144,6 +148,7 @@ export const actions = {
       const pkEncrypted = CryptoJS.AES.encrypt(privateKey, password)
 
       commit(`addWallet`, {
+        type: 'localWallet',
         address,
         privateKey: pkEncrypted.toString()
       })
@@ -163,6 +168,29 @@ export const actions = {
       return false
     }
   },
+  recoverWalletFromKeplr({ commit, state, dispatch }, address) {
+    try {
+      commit(`toggleLoading`)
+
+      commit(`addWallet`, {
+        type: 'keplrWallet',
+        address,
+        privateKey: null
+      })
+
+      const i = state.wallets.findIndex(w => w.address === address)
+      commit(`connect`, i)
+
+      dispatch('bank/updateBalance', null, { root: true })
+      dispatch('bank/subscribe', null, { root: true })
+
+      commit(`toggleLoading`)
+
+      return true
+    } catch (e) {
+      console.error(e)
+    }
+  },
   async recoverAccountFromKeystore({
     commit, state, dispatch
   }, {
@@ -178,6 +206,7 @@ export const actions = {
         address
       } = this.$client.recoverAccountFromKeystore(keystore, password)
       commit(`addWallet`, {
+        type: 'localWallet',
         address, privateKey, password
       })
 

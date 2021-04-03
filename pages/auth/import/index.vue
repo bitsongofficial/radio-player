@@ -6,21 +6,37 @@
           <WalletImportHeader title="Import your crypto wallet" />
           <WalletAlert />
           <v-list-item-group class="pt-2">
-            <v-list-item
-              v-for="(method, i) in methods"
-              :key="i"
-              :to="method.to"
-              link
-            >
+            <v-list-item link @click="addKeplrChain">
               <v-list-item-icon>
-                <v-icon v-text="method.icon"></v-icon>
+                <v-icon>mdi-shield-key-outline</v-icon>
               </v-list-item-icon>
-              <v-list-item-content v-text="method.label"></v-list-item-content>
+              <v-list-item-content>Keplr</v-list-item-content>
+              <v-list-item-action>
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+
+            <v-list-item link to="/auth/import/mnemonic">
+              <v-list-item-icon>
+                <v-icon>mdi-shield-key-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>Mnemonic phrase</v-list-item-content>
+              <v-list-item-action>
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+
+            <v-list-item link to="/auth/import/privatekey">
+              <v-list-item-icon>
+                <v-icon>mdi-shield-key-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>Private key</v-list-item-content>
               <v-list-item-action>
                 <v-icon>mdi-chevron-right</v-icon>
               </v-list-item-action>
             </v-list-item>
           </v-list-item-group>
+
           <v-divider class="mt-6"></v-divider>
           <v-card-actions class="pt-8 pb-0">
             <v-spacer></v-spacer>
@@ -40,6 +56,8 @@
 import WalletImportHeader from "@/components/Wallet/Common/AuthHeader";
 import WalletAlert from "@/components/Wallet/Common/Alert";
 
+import { addChain } from "@/lib/keplr";
+
 export default {
   layout: "auth",
 
@@ -48,21 +66,19 @@ export default {
     WalletAlert
   },
 
-  data() {
-    return {
-      methods: [
-        {
-          icon: "mdi-shield-key-outline",
-          label: "Mnemonic phrase",
-          to: "/auth/import/mnemonic"
-        },
-        {
-          icon: "mdi-key-outline",
-          label: "Private key",
-          to: "/auth/import/privatekey"
-        }
-      ]
-    };
+  methods: {
+    async addKeplrChain() {
+      const address = await addChain();
+
+      const result = this.$store.dispatch(
+        "wallet/recoverWalletFromKeplr",
+        address
+      );
+
+      if (result) {
+        this.$router.push("/");
+      }
+    }
   }
 };
 </script>

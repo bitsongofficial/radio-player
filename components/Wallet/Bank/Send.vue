@@ -72,7 +72,13 @@
 import { Coin, Fee } from "@bitsongofficial/js-sdk";
 import CryptoJS from "crypto-js";
 
-import { convertMacroToMicroAmount, parseErrorResponse } from "@/lib/utils";
+import { SigningCosmosClient, coin, coins } from "@cosmjs/launchpad";
+
+import {
+  convertMacroToMicroAmount,
+  parseErrorResponse,
+  parseErrorResponseKeplr
+} from "@/lib/utils";
 import BankSendConfirmation from "@/components/Wallet/Bank/SendConfirmation";
 
 export default {
@@ -122,13 +128,22 @@ export default {
     }
   },
   methods: {
-    onSend() {
-      this.showModal = true;
+    async onSend() {
+      switch (this.$store.getters["wallet/type"]) {
+        case "localWallet":
+          this.showModal = true;
+          break;
+        case "keplrWallet":
+          await this.keplrWalletSend();
+          break;
+      }
     },
+
     onCancel() {
       this.showModal = false;
       this.resetResponse();
     },
+
     resetResponse() {
       this.response = {
         success: false,
@@ -136,6 +151,65 @@ export default {
         tx_hash: null
       };
     },
+
+    async keplrWalletSend() {
+      this.resetResponse();
+      this.loading = true;
+
+      try {
+        await window.keplr.enable(process.env.CHAIN_ID);
+
+        const offlineSigner = await window.getOfflineSigner(
+          process.env.CHAIN_ID
+        );
+
+        const cosmJS = new SigningCosmosClient(
+          process.env.LCD,
+          this.$store.getters["wallet/address"],
+          offlineSigner
+        );
+
+        const msg = {
+          type: "cosmos-sdk/MsgSend",
+          value: {
+            from_address: this.address,
+            to_address: this.form.to_address,
+            amount: [
+              coin(
+                convertMacroToMicroAmount(this.form.amount, this.decimals),
+                this.form.coin.toLowerCase()
+              )
+            ]
+          }
+        };
+
+        const fee = {
+          amount: coins(
+            this.form.gas_price * this.form.gas_limit,
+            this.$store.getters["app/micro_stake_denom"].toLowerCase()
+          ),
+          gas: this.form.gas_limit
+        };
+
+        const response = await cosmJS.signAndBroadcast([msg], fee);
+        console.log(response);
+        this.response = parseErrorResponseKeplr(response);
+        this.showModal = true;
+
+        this.$emit("txSuccess");
+      } catch (e) {
+        if (e !== undefined) {
+          console.error(e);
+          this.response.log = e.message;
+        } else {
+          this.response.log = `Something went wrong!`;
+        }
+      } finally {
+        this.form.password = null;
+        this.loading = false;
+      }
+    },
+
     async onConfirm() {
       this.resetResponse();
       this.loadingModal = true;
