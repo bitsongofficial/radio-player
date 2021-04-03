@@ -24,21 +24,26 @@
     </v-container>
 
     <NuxtChild />
+    <wallet-tx-response-failed />
   </page-template>
 </template>
 
 <script>
 import PageTemplate from "@/components/PageTemplate";
 import WalletOverview from "~/components/Wallet/WalletOverview.vue";
+import WalletTxResponseFailed from "@/components/Wallet/TxResponseFailed";
 
 export default {
   components: {
     PageTemplate,
-    WalletOverview
+    WalletOverview,
+    WalletTxResponseFailed
   },
 
   data() {
     return {
+      showConfirmation: true,
+
       tab: null,
       tabs: [
         { name: "Balance", ref: "/wallet" },

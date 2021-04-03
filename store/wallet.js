@@ -4,7 +4,25 @@ import CryptoJS from 'crypto-js'
 export const state = () => ({
   loading: false,
   wallets: [],
-  selectedWallet: null
+  selectedWallet: null,
+  msgs: [
+    {
+      type: "cosmos-sdk/MsgWithdrawDelegationReward",
+      value: {
+        delegator_address:
+          "bitsong189y5r7c3a9a2kpthd5ah6l7za2jz7p8y04lt45",
+        validator_address:
+          "bitsongvaloper189y5r7c3a9a2kpthd5ah6l7za2jz7p8yw3rz9f"
+      }
+    },
+    {
+      type: "cosmos-sdk/MsgWithdrawValidatorCommission",
+      value: {
+        validator_address:
+          "bitsongvaloper189y5r7c3a9a2kpthd5ah6l7za2jz7p8yw3rz9f"
+      }
+    }
+  ]
 })
 
 export const getters = {
@@ -29,6 +47,9 @@ export const getters = {
   isLoggedIn: state => {
     return state.selectedWallet === null ? false : true
   },
+  msgs: state => {
+    return state.msgs
+  }
 }
 
 export const mutations = {
@@ -48,6 +69,9 @@ export const mutations = {
   },
   disconnect: (state, index) => {
     state.selectedWallet = null
+  },
+  setMessages: (state, payload) => {
+    state.msgs = payload
   }
 }
 
@@ -230,6 +254,24 @@ export const actions = {
   }) {
     try {
       commit(`disconnect`)
+    } catch (e) {
+      console.error(e)
+    }
+  },
+  setMessages({
+    commit
+  }, payload) {
+    try {
+      commit(`setMessages`, payload)
+    } catch (e) {
+      console.error(e)
+    }
+  },
+  clearMessages({
+    commit
+  }) {
+    try {
+      commit(`setMessages`, [])
     } catch (e) {
       console.error(e)
     }

@@ -5,66 +5,49 @@
     max-width="400"
     :value="true"
   >
-    <card-msg
-      title="Send Coins"
-      subtitle="Transfer your coins to your friends."
-      :loading="loading"
-      :memo="form.memo"
-      :gas_price="form.gas_price"
-      :gas_limit="form.gas_limit"
-      v-on:update:memo="form.memo = $event"
-      v-on:update:gas_price="form.gas_price = $event"
-      v-on:update:gas_limit="form.gas_limit = $event"
-    >
-      <template v-slot:fields>
-        <input-address
-          class="col-12"
-          v-model="form.to_address"
-          v-on:update:address="form.to_address = $event"
-        ></input-address>
-        <input-coin
-          class="col-6"
-          v-model="form.coin"
-          v-on:update:coin="form.coin = $event"
-        ></input-coin>
-        <input-amount
-          class="col-6"
-          v-model="form.amount"
-          :coin="form.coin"
-          v-on:update:amount="form.amount = $event"
-        ></input-amount>
-        <v-text-field
-          v-model="form.password"
-          autocomplete="off"
-          placeholder="Password"
-          class="col-12"
-          type="password"
-        ></v-text-field>
-      </template>
-
-      <template v-slot:actions>
+    <v-card :loading="loading" :disabled="loading">
+      <v-card-title>Send Coins</v-card-title>
+      <v-card-subtitle class="pt-1"
+        >Transfer your coins to your friends</v-card-subtitle
+      >
+      <v-divider></v-divider>
+      <v-container fluid>
+        <v-row class="px-4">
+          <input-address
+            class="col-12"
+            v-model="form.to_address"
+            v-on:update:address="form.to_address = $event"
+          ></input-address>
+          <input-coin
+            class="col-6"
+            v-model="form.coin"
+            v-on:update:coin="form.coin = $event"
+          ></input-coin>
+          <input-amount
+            class="col-6"
+            v-model="form.amount"
+            :coin="form.coin"
+            v-on:update:amount="form.amount = $event"
+          ></input-amount>
+        </v-row>
+      </v-container>
+      <v-card-actions>
+        <v-spacer></v-spacer>
         <v-btn text @click="$emit('cancel')">Close</v-btn>
-        <v-btn :disabled="disabled" color="primary" @click.stop="onSend">
+        <v-btn
+          :disabled="disabled || loading"
+          color="primary"
+          @click.stop="onSend"
+        >
           Send
         </v-btn>
-      </template>
+      </v-card-actions>
+    </v-card>
 
-      <template v-slot:dialog>
-        <bank-send-confirmation
-          v-if="showModal"
-          :to_address="form.to_address"
-          :amount="form.amount"
-          :coin="form.coin"
-          :memo="form.memo"
-          :gas_price="form.gas_price"
-          :gas_limit="form.gas_limit"
-          :loading="loadingModal"
-          :response="response"
-          v-on:cancel="onCancel"
-          v-on:confirm="onConfirm"
-        ></bank-send-confirmation>
-      </template>
-    </card-msg>
+    <wallet-tx-confirmation
+      :value="$store.getters['wallet/msgs'].length !== 0"
+      v-on:signed-tx="onSignedTx"
+    />
   </v-dialog>
 </template>
 
@@ -79,45 +62,29 @@ import {
   parseErrorResponse,
   parseErrorResponseKeplr
 } from "@/lib/utils";
-import BankSendConfirmation from "@/components/Wallet/Bank/SendConfirmation";
+
+import WalletTxConfirmation from "@/components/Wallet/TxConfirmation";
 
 export default {
   components: {
-    BankSendConfirmation
+    WalletTxConfirmation
   },
+
   data: () => ({
     loading: false,
-    loadingModal: false,
-
-    showModal: false,
-    response: {
-      success: false,
-      log: null,
-      tx_hash: null
-    },
     form: {
       to_address: "",
       coin: null,
-      amount: "",
-      memo: "",
-      gas_price: 0,
-      gas_limit: 0,
-      password: null
+      amount: ""
     }
   }),
-
-  created() {
-    this.form.gas_price = this.$store.getters["app/gas_price"];
-    this.form.gas_limit = this.$store.getters["app/gas_limit"];
-  },
 
   computed: {
     disabled() {
       return (
         this.form.to_address === "" ||
         this.form.coin === null ||
-        this.form.amount === "" ||
-        this.form.password === null
+        this.form.amount === ""
       );
     },
     address() {
@@ -128,28 +95,64 @@ export default {
     }
   },
   methods: {
-    async onSend() {
-      switch (this.$store.getters["wallet/type"]) {
-        case "localWallet":
-          this.showModal = true;
-          break;
-        case "keplrWallet":
-          await this.keplrWalletSend();
-          break;
-      }
-    },
-
     onCancel() {
       this.showModal = false;
-      this.resetResponse();
     },
 
-    resetResponse() {
-      this.response = {
-        success: false,
-        log: null,
-        tx_hash: null
+    async onSend() {
+      const msg = {
+        type: "cosmos-sdk/MsgSend",
+        value: {
+          from_address: this.address,
+          to_address: this.form.to_address,
+          amount: [
+            coin(
+              convertMacroToMicroAmount(this.form.amount, this.decimals),
+              this.form.coin.toLowerCase()
+            )
+          ]
+        }
       };
+
+      this.$store.dispatch("wallet/setMessages", [msg]);
+      // switch (this.$store.getters["wallet/type"]) {
+      //   case "localWallet":
+      //     this.showModal = true;
+      //     break;
+      //   case "keplrWallet":
+      //     await this.keplrWalletSend();
+      //     break;
+      // }
+    },
+
+    async onSignedTx(signedTx) {
+      try {
+        this.loading = true;
+
+        const response = await this.$client.broadcast(signedTx);
+
+        // Error:
+        /*
+          {
+              "result": {
+                  "height": "0",
+                  "txhash": "508E9A38624341E0942BF6BB32B06E14C45EBC3BF276DF8331FF36A331143E8B",
+                  "codespace": "sdk",
+                  "code": 4,
+                  "raw_log": "unauthorized: signature verification failed; verify correct account sequence and chain-id",
+                  "gas_wanted": "200000",
+                  "gas_used": "43054"
+              },
+              "status": 200
+          }
+        */
+
+        console.log(parseErrorResponse(response));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.loading = false;
+      }
     },
 
     async keplrWalletSend() {
@@ -212,7 +215,6 @@ export default {
 
     async onConfirm() {
       this.resetResponse();
-      this.loadingModal = true;
 
       try {
         const amount = [
