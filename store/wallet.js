@@ -3,26 +3,11 @@ import CryptoJS from 'crypto-js'
 
 export const state = () => ({
   loading: false,
-  wallets: [],
-  selectedWallet: null,
-  msgs: [
-    {
-      type: "cosmos-sdk/MsgWithdrawDelegationReward",
-      value: {
-        delegator_address:
-          "bitsong189y5r7c3a9a2kpthd5ah6l7za2jz7p8y04lt45",
-        validator_address:
-          "bitsongvaloper189y5r7c3a9a2kpthd5ah6l7za2jz7p8yw3rz9f"
-      }
-    },
-    {
-      type: "cosmos-sdk/MsgWithdrawValidatorCommission",
-      value: {
-        validator_address:
-          "bitsongvaloper189y5r7c3a9a2kpthd5ah6l7za2jz7p8yw3rz9f"
-      }
-    }
-  ]
+  wallet: null,
+  tx: {
+    response: null
+  },
+  msgs: []
 })
 
 export const getters = {
@@ -30,25 +15,28 @@ export const getters = {
     return state.loading
   },
   mnemonic: state => {
-    return state.selectedWallet === null ? '' : state.wallets[state.selectedWallet].mnemonic
+    return state.wallet !== null ? state.wallet.mnemonic : null
   },
   address: state => {
-    return state.selectedWallet === null ? null : state.wallets[state.selectedWallet].address
+    return state.wallet !== null ? state.wallet.address : null
   },
   type: state => {
-    return state.selectedWallet === null ? null : state.wallets[state.selectedWallet].type
+    return state.wallet !== null ? state.wallet.type : null
   },
   privateKey: state => {
-    return state.selectedWallet === null ? '' : state.wallets[state.selectedWallet].privateKey
+    return state.wallet !== null ? state.wallet.privateKey : null
   },
   password: state => {
-    return state.selectedWallet === null ? '' : state.wallets[state.selectedWallet].password
+    return state.wallet !== null ? state.wallet.password : null
   },
   isLoggedIn: state => {
-    return state.selectedWallet === null ? false : true
+    return state.wallet === null ? false : true
   },
   msgs: state => {
     return state.msgs
+  },
+  txResponse: state => {
+    return state.tx.response
   }
 }
 
@@ -56,22 +44,19 @@ export const mutations = {
   toggleLoading: (state) => {
     state.loading = !state.loading
   },
-  addWallet: async (state, { type, privateKey, address }) => {
-    state.wallets.push({
+  connect: (state, { type, privateKey, address }) => {
+    state.wallet = {
       type, privateKey, address
-    })
-  },
-  delWallet: (state, index) => {
-    state.wallets.pop(index)
-  },
-  connect: (state, index) => {
-    state.selectedWallet = index
+    }
   },
   disconnect: (state, index) => {
-    state.selectedWallet = null
+    state.wallet = null
   },
   setMessages: (state, payload) => {
     state.msgs = payload
+  },
+  setTxResponse: (state, payload) => {
+    state.tx.response = payload
   }
 }
 
@@ -129,14 +114,11 @@ export const actions = {
 
       const pkEncrypted = CryptoJS.AES.encrypt(privateKey, password)
 
-      commit(`addWallet`, {
+      commit(`connect`, {
         type: 'localWallet',
         address,
         privateKey: pkEncrypted.toString()
       })
-
-      const i = state.wallets.findIndex(w => w.address === address)
-      commit(`connect`, i)
 
       dispatch('bank/updateBalance', null, { root: true })
       dispatch('bank/subscribe', null, { root: true })
@@ -171,14 +153,11 @@ export const actions = {
 
       const pkEncrypted = CryptoJS.AES.encrypt(privateKey, password)
 
-      commit(`addWallet`, {
+      commit(`connect`, {
         type: 'localWallet',
         address,
         privateKey: pkEncrypted.toString()
       })
-
-      const i = state.wallets.findIndex(w => w.address === address)
-      commit(`connect`, i)
 
       dispatch('bank/updateBalance', null, { root: true })
       dispatch('bank/subscribe', null, { root: true })
@@ -196,14 +175,11 @@ export const actions = {
     try {
       commit(`toggleLoading`)
 
-      commit(`addWallet`, {
+      commit(`connect`, {
         type: 'keplrWallet',
         address,
         privateKey: null
       })
-
-      const i = state.wallets.findIndex(w => w.address === address)
-      commit(`connect`, i)
 
       dispatch('bank/updateBalance', null, { root: true })
       dispatch('bank/subscribe', null, { root: true })
@@ -229,13 +205,11 @@ export const actions = {
         privateKey,
         address
       } = this.$client.recoverAccountFromKeystore(keystore, password)
-      commit(`addWallet`, {
+
+      commit(`connect`, {
         type: 'localWallet',
         address, privateKey, password
       })
-
-      const i = state.wallets.findIndex(w => w.address === address)
-      commit(`connect`, i)
 
       dispatch('bank/updateBalance', null, { root: true })
       dispatch('bank/subscribe', null, { root: true })
@@ -272,6 +246,26 @@ export const actions = {
   }) {
     try {
       commit(`setMessages`, [])
+    } catch (e) {
+      console.error(e)
+    }
+  },
+
+  setTxResponse({
+    commit
+  }, payload) {
+    try {
+      commit(`setTxResponse`, payload)
+    } catch (e) {
+      console.error(e)
+    }
+  },
+
+  clearTxResponse({
+    commit
+  }) {
+    try {
+      commit(`setTxResponse`, null)
     } catch (e) {
       console.error(e)
     }

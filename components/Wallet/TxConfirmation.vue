@@ -28,12 +28,20 @@
                       <v-list-item-content :key="key">
                         <v-list-item-title>
                           <div v-if="key === 'amount'">
-                            <amount
-                              v-for="(coin, i) in value"
-                              :key="i"
-                              :micro-amount="coin.amount"
-                              :denom="coin.denom"
-                            />
+                            <div v-if="Array.isArray(value)">
+                              <amount
+                                v-for="(coin, i) in value"
+                                :key="i"
+                                :micro-amount="coin.amount"
+                                :denom="coin.denom"
+                              />
+                            </div>
+                            <div v-else>
+                              <amount
+                                :micro-amount="value.amount"
+                                :denom="value.denom"
+                              />
+                            </div>
                           </div>
                           <span v-else>{{ value }}</span>
                         </v-list-item-title>

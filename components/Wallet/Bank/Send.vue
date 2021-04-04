@@ -45,22 +45,21 @@
     </v-card>
 
     <wallet-tx-confirmation
-      :value="$store.getters['wallet/msgs'].length !== 0"
+      :value="$store.getters['wallet/msgs'].length > 0"
       v-on:signed-tx="onSignedTx"
     />
   </v-dialog>
 </template>
 
 <script>
-import { Coin, Fee } from "@bitsongofficial/js-sdk";
-import CryptoJS from "crypto-js";
-
-import { SigningCosmosClient, coin, coins } from "@cosmjs/launchpad";
+import { coin } from "@cosmjs/launchpad";
 
 import {
   convertMacroToMicroAmount,
   parseErrorResponse,
-  parseErrorResponseKeplr
+  parseErrorResponseKeplr,
+  enableKeplr,
+  defaultFees
 } from "@/lib/utils";
 
 import WalletTxConfirmation from "@/components/Wallet/TxConfirmation";
@@ -95,84 +94,9 @@ export default {
     }
   },
   methods: {
-    onCancel() {
-      this.showModal = false;
-    },
-
-    async onSend() {
-      const msg = {
-        type: "cosmos-sdk/MsgSend",
-        value: {
-          from_address: this.address,
-          to_address: this.form.to_address,
-          amount: [
-            coin(
-              convertMacroToMicroAmount(this.form.amount, this.decimals),
-              this.form.coin.toLowerCase()
-            )
-          ]
-        }
-      };
-
-      this.$store.dispatch("wallet/setMessages", [msg]);
-      // switch (this.$store.getters["wallet/type"]) {
-      //   case "localWallet":
-      //     this.showModal = true;
-      //     break;
-      //   case "keplrWallet":
-      //     await this.keplrWalletSend();
-      //     break;
-      // }
-    },
-
-    async onSignedTx(signedTx) {
-      try {
-        this.loading = true;
-
-        const response = await this.$client.broadcast(signedTx);
-
-        // Error:
-        /*
-          {
-              "result": {
-                  "height": "0",
-                  "txhash": "508E9A38624341E0942BF6BB32B06E14C45EBC3BF276DF8331FF36A331143E8B",
-                  "codespace": "sdk",
-                  "code": 4,
-                  "raw_log": "unauthorized: signature verification failed; verify correct account sequence and chain-id",
-                  "gas_wanted": "200000",
-                  "gas_used": "43054"
-              },
-              "status": 200
-          }
-        */
-
-        console.log(parseErrorResponse(response));
-      } catch (e) {
-        console.error(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    async keplrWalletSend() {
-      this.resetResponse();
-      this.loading = true;
-
-      try {
-        await window.keplr.enable(process.env.CHAIN_ID);
-
-        const offlineSigner = await window.getOfflineSigner(
-          process.env.CHAIN_ID
-        );
-
-        const cosmJS = new SigningCosmosClient(
-          process.env.LCD,
-          this.$store.getters["wallet/address"],
-          offlineSigner
-        );
-
-        const msg = {
+    createMsgs() {
+      return [
+        {
           type: "cosmos-sdk/MsgSend",
           value: {
             from_address: this.address,
@@ -184,84 +108,71 @@ export default {
               )
             ]
           }
-        };
-
-        const fee = {
-          amount: coins(
-            this.form.gas_price * this.form.gas_limit,
-            this.$store.getters["app/micro_stake_denom"].toLowerCase()
-          ),
-          gas: this.form.gas_limit
-        };
-
-        const response = await cosmJS.signAndBroadcast([msg], fee);
-        console.log(response);
-        this.response = parseErrorResponseKeplr(response);
-        this.showModal = true;
-
-        this.$emit("txSuccess");
-      } catch (e) {
-        if (e !== undefined) {
-          console.error(e);
-          this.response.log = e.message;
-        } else {
-          this.response.log = `Something went wrong!`;
         }
+      ];
+    },
+
+    async onSend() {
+      switch (this.$store.getters["wallet/type"]) {
+        case "localWallet":
+          this.localWalletSend();
+          break;
+        case "keplrWallet":
+          await this.keplrWalletSend();
+          break;
+      }
+    },
+
+    localWalletSend() {
+      this.$store.dispatch("wallet/setMessages", this.createMsgs());
+    },
+
+    async onSignedTx(signedTx) {
+      try {
+        this.loading = true;
+
+        const response = await this.$client.broadcast(signedTx);
+
+        this.$emit("cancel");
+
+        this.$store.dispatch(
+          "wallet/setTxResponse",
+          parseErrorResponse(response)
+        );
+      } catch (e) {
+        console.error(e);
       } finally {
-        this.form.password = null;
         this.loading = false;
       }
     },
 
-    async onConfirm() {
-      this.resetResponse();
+    async keplrWalletSend() {
+      this.loading = true;
 
       try {
-        const amount = [
-          new Coin(
-            String(convertMacroToMicroAmount(this.form.amount, this.decimals)),
-            this.form.coin.toLowerCase()
-          )
-        ];
+        const keplr = await enableKeplr(this.$store.getters["wallet/address"]);
 
-        const fee = new Fee(
-          [
-            new Coin(
-              String(this.form.gas_price * this.form.gas_limit),
-              this.$store.getters["app/micro_stake_denom"].toLowerCase()
-            )
-          ],
-          String(this.form.gas_limit)
+        const response = await keplr.signAndBroadcast(
+          this.createMsgs(),
+          defaultFees()
         );
 
-        const decryptPk = await CryptoJS.AES.decrypt(
-          this.$store.getters["wallet/privateKey"],
-          this.form.password
-        );
-        await this.$client.setAccountInfo(
-          this.$store.getters["wallet/address"]
-        );
-        this.$client.setPrivateKey(decryptPk.toString(CryptoJS.enc.Utf8));
+        this.$emit("cancel");
 
-        const response = await this.$client.send(
-          this.form.to_address,
-          amount,
-          this.form.memo,
-          fee
+        this.$store.dispatch(
+          "wallet/setTxResponse",
+          parseErrorResponseKeplr(response)
         );
-        this.response = parseErrorResponse(response);
-        this.$emit("close");
       } catch (e) {
-        if (e !== undefined) {
-          console.error(e);
-          this.response.log = e.message;
-        } else {
-          this.response.log = `Something went wrong!`;
-        }
+        console.error(e);
+
+        this.$store.dispatch("wallet/setTxResponse", {
+          success: false,
+          tx_hash: null,
+          log: `Something went wrong!`
+        });
       } finally {
-        this.form.password = null;
-        this.$client.setPrivateKey(null);
-        this.loadingModal = false;
+        this.loading = false;
       }
     }
   }
