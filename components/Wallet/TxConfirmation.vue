@@ -3,7 +3,7 @@
     :fullscreen="$vuetify.breakpoint.smAndDown"
     persistent
     max-width="400"
-    :value="value"
+    :value="$store.getters['wallet/msgs'].length > 0"
   >
     <v-card>
       <v-card-title>
@@ -166,6 +166,8 @@ import CryptoJS from "crypto-js";
 
 import Amount from "@/components/Wallet/Common/Amount";
 
+import { parseErrorResponse } from "@/lib/utils";
+
 export default {
   props: {
     value: {
@@ -234,7 +236,15 @@ export default {
         );
 
         this.onClose();
-        this.$emit("signed-tx", signedTx);
+        this.$store.dispatch("wallet/setBroadcasting", true);
+
+        const response = await this.$client.broadcast(signedTx);
+        this.$store.dispatch(
+          "wallet/setTxResponse",
+          parseErrorResponse(response)
+        );
+
+        this.$store.dispatch("wallet/setBroadcasting", false);
       } catch (e) {
         console.error(e);
       }

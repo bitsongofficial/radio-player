@@ -24,6 +24,9 @@
     </v-container>
 
     <NuxtChild />
+
+    <wallet-tx-confirmation />
+    <wallet-tx-waiting />
     <wallet-tx-response />
   </page-template>
 </template>
@@ -32,12 +35,16 @@
 import PageTemplate from "@/components/PageTemplate";
 import WalletOverview from "~/components/Wallet/WalletOverview.vue";
 import WalletTxResponse from "@/components/Wallet/TxResponse";
+import WalletTxWaiting from "@/components/Wallet/TxWaiting";
+import WalletTxConfirmation from "@/components/Wallet/TxConfirmation";
 
 export default {
   components: {
     PageTemplate,
     WalletOverview,
-    WalletTxResponse
+    WalletTxResponse,
+    WalletTxWaiting,
+    WalletTxConfirmation
   },
 
   data() {

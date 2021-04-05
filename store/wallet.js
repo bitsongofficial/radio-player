@@ -7,7 +7,8 @@ export const state = () => ({
   tx: {
     response: null
   },
-  msgs: []
+  msgs: [],
+  isBroadcasting: false
 })
 
 export const getters = {
@@ -37,6 +38,9 @@ export const getters = {
   },
   txResponse: state => {
     return state.tx.response
+  },
+  isBroadcasting: state => {
+    return state.isBroadcasting
   }
 }
 
@@ -57,6 +61,9 @@ export const mutations = {
   },
   setTxResponse: (state, payload) => {
     state.tx.response = payload
+  },
+  setBroadcasting: (state, payload) => {
+    state.isBroadcasting = payload
   }
 }
 
@@ -266,6 +273,16 @@ export const actions = {
   }) {
     try {
       commit(`setTxResponse`, null)
+    } catch (e) {
+      console.error(e)
+    }
+  },
+
+  setBroadcasting({
+    commit
+  }, payload) {
+    try {
+      commit(`setBroadcasting`, payload)
     } catch (e) {
       console.error(e)
     }

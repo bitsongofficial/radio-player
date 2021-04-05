@@ -43,11 +43,6 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-
-    <wallet-tx-confirmation
-      :value="$store.getters['wallet/msgs'].length > 0"
-      v-on:signed-tx="onSignedTx"
-    />
   </v-dialog>
 </template>
 
@@ -56,19 +51,12 @@ import { coin } from "@cosmjs/launchpad";
 
 import {
   convertMacroToMicroAmount,
-  parseErrorResponse,
   parseErrorResponseKeplr,
   enableKeplr,
   defaultFees
 } from "@/lib/utils";
 
-import WalletTxConfirmation from "@/components/Wallet/TxConfirmation";
-
 export default {
-  components: {
-    WalletTxConfirmation
-  },
-
   data: () => ({
     loading: false,
     form: {
@@ -78,21 +66,6 @@ export default {
     }
   }),
 
-  computed: {
-    disabled() {
-      return (
-        this.form.to_address === "" ||
-        this.form.coin === null ||
-        this.form.amount === ""
-      );
-    },
-    address() {
-      return this.$store.getters[`wallet/address`];
-    },
-    decimals() {
-      return this.$store.getters["app/decimals"];
-    }
-  },
   methods: {
     createMsgs() {
       return [
@@ -125,25 +98,7 @@ export default {
 
     localWalletSend() {
       this.$store.dispatch("wallet/setMessages", this.createMsgs());
-    },
-
-    async onSignedTx(signedTx) {
-      try {
-        this.loading = true;
-
-        const response = await this.$client.broadcast(signedTx);
-
-        this.$emit("cancel");
-
-        this.$store.dispatch(
-          "wallet/setTxResponse",
-          parseErrorResponse(response)
-        );
-      } catch (e) {
-        console.error(e);
-      } finally {
-        this.loading = false;
-      }
+      this.$emit("cancel");
     },
 
     async keplrWalletSend() {
@@ -174,6 +129,22 @@ export default {
       } finally {
         this.loading = false;
       }
+    }
+  },
+
+  computed: {
+    disabled() {
+      return (
+        this.form.to_address === "" ||
+        this.form.coin === null ||
+        this.form.amount === ""
+      );
+    },
+    address() {
+      return this.$store.getters[`wallet/address`];
+    },
+    decimals() {
+      return this.$store.getters["app/decimals"];
     }
   }
 };
