@@ -1,6 +1,6 @@
 {
   "name": "radio-player",
-  "version": "0.10.3",
+  "version": "0.11.0-dev",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
