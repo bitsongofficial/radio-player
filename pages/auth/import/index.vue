@@ -4,18 +4,21 @@
       <v-col cols="12" sm="8" md="3">
         <v-card class="pa-6">
           <WalletImportHeader title="Import your crypto wallet" />
-          <WalletAlert />
-          <v-list-item-group class="pt-2">
-            <v-list-item link @click="addKeplrChain">
-              <v-list-item-icon>
-                <v-icon>mdi-shield-key-outline</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>Keplr</v-list-item-content>
-              <v-list-item-action>
-                <v-icon>mdi-chevron-right</v-icon>
-              </v-list-item-action>
-            </v-list-item>
-
+          <div class="text-center my-4">
+            <img
+              style="cursor:pointer"
+              @click.stop="addKeplrChain"
+              src="/keplr_dark.png"
+              alt="Keplr wallet"
+            />
+          </div>
+          <v-switch
+            v-model="showUnsecure"
+            label="Show unsecure methods"
+            class="ml-2 mt-2 font-weight-bold"
+          ></v-switch>
+          <WalletAlert v-if="showUnsecure" />
+          <v-list-item-group v-if="showUnsecure" class="pt-2">
             <v-list-item link to="/auth/import/mnemonic">
               <v-list-item-icon>
                 <v-icon>mdi-shield-key-outline</v-icon>
@@ -64,6 +67,12 @@ export default {
   components: {
     WalletImportHeader,
     WalletAlert
+  },
+
+  data() {
+    return {
+      showUnsecure: false
+    };
   },
 
   methods: {
