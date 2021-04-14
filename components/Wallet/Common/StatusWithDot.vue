@@ -2,7 +2,7 @@
   <div>
     <span v-if="capitalizedStatus === 'Passed'" class="green dot"></span>
     <span
-      v-if="capitalizedStatus === 'VotingPeriod'"
+      v-else-if="capitalizedStatus === 'VotingPeriod'"
       class="primary dot"
     ></span>
     <span v-else class="red dot"></span>

@@ -16,7 +16,7 @@
             <status-with-dot :status="proposal.proposal_status" />
           </v-chip>
           <v-chip
-            v-if="proposal.proposal_status === 'VotingPeriod'"
+            v-else-if="proposal.proposal_status === 'VotingPeriod'"
             color="primary"
             outlined
           >
