@@ -57,7 +57,7 @@
             Deposit End Time
           </div>
           <div class="subtitle-1 mb-1">
-            {{ formatTimestamp(proposal.deposit_end_time) }}
+            {{ new Date(proposal.deposit_end_time).toLocaleString() }}
           </div>
         </v-col>
         <v-col cols="12" md="6">
@@ -66,7 +66,7 @@
             Voting Start
           </div>
           <div class="subtitle-1 mb-1">
-            {{ formatTimestamp(proposal.voting_start_time) }}
+            {{ new Date(proposal.voting_start_time).toLocaleString() }}
           </div>
 
           <!-- Voting end -->
@@ -74,7 +74,7 @@
             Voting End
           </div>
           <div class="subtitle-1 mb-1">
-            {{ formatTimestamp(proposal.voting_end_time) }}
+            {{ new Date(proposal.voting_end_time).toLocaleString() }}
           </div>
 
           <!-- Submit Time -->
@@ -82,7 +82,7 @@
             Submit Time
           </div>
           <div class="subtitle-1 mb-1">
-            {{ formatTimestamp(proposal.submit_time) }}
+            {{ new Date(proposal.submit_time).toLocaleString() }}
           </div>
         </v-col>
       </v-row>
@@ -111,7 +111,6 @@
 <script>
 import Amount from "@/components/Wallet/Common/Amount.vue";
 import ProposalStatistic from "@/components/Wallet/Governance/ProposalStatistic.vue";
-import { formatTimestamp } from "@/lib/utils";
 
 export default {
   components: {
@@ -183,9 +182,6 @@ export default {
       } catch (e) {
         console.error(e);
       }
-    },
-    formatTimestamp(ts) {
-      return formatTimestamp(ts);
     }
   }
 };
