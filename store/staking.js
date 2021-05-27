@@ -4,7 +4,8 @@ import {
 
 export const state = () => ({
   validators: [],
-  delegations: []
+  delegations: [],
+  unbondings: []
 })
 
 export const getters = {
@@ -44,6 +45,10 @@ export const getters = {
 
   delegations: (state) => {
     return state.delegations
+  },
+
+  unbondings: (state) => {
+    return state.unbondings
   }
 }
 
@@ -54,6 +59,10 @@ export const mutations = {
 
   setDelegations: (state, payload) => {
     state.delegations = payload
+  },
+
+  setUnbondings: (state, payload) => {
+    state.unbondings = payload
   }
 }
 
@@ -73,6 +82,38 @@ export const actions = {
       commit('setValidators', validators)
     } catch (e) {
       console.error(e)
+    }
+  },
+
+  async getUnbondings({ commit, getters, rootGetters }) {
+    try {
+      const address = rootGetters['wallet/address']
+      if (address === null) return
+
+      let unbondingList = []
+
+      let unbondings = await this.$btsg.getUnbondingDelegations(address)
+
+      unbondings.map(u => {
+        const val = getters.validators.find(
+          v => v.operator_address === u.validator_address
+        )
+
+        u.entries.map(e => {
+          unbondingList.push({
+            validator_address: u.validator_address,
+            validator_name: val !== undefined ? val.description.moniker : '',
+            identity: val !== undefined ? val.description.identity : '',
+            status: val.status,
+            balance: e.balance,
+            completion_time: e.completion_time
+          })
+        })
+      })
+
+      commit('setUnbondings', unbondingList)
+    } catch (e) {
+
     }
   },
 
@@ -108,7 +149,8 @@ export const actions = {
             identity: val !== undefined ? val.description.identity : '',
             rewards: valReward[0],
             commission: val.commission.commission_rates.rate,
-            status: val.status
+            status: val.status,
+            jailed: val.jailed
           }
         })
 

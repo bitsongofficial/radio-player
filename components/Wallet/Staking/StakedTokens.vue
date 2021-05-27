@@ -86,8 +86,11 @@
               </v-btn>
             </template>
             <v-list tile class="py-0">
-              <v-list-item nuxt-link @click.stop="onClaimRewards(item)">
+              <v-list-item @click.stop="onClaimRewards(item)">
                 <v-list-item-title>Claim rewards</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click.stop="onUnbond(item)">
+                <v-list-item-title>Unbond</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -100,6 +103,13 @@
       v-model="selected"
       v-on:cancel="selected = null"
     ></dialog-distribution>
+
+    <dialog-unbond
+      v-if="showUnbond"
+      v-model="validator"
+      v-on:cancel="showUnbond = false"
+      v-on:tx-success="showUnbond = false"
+    ></dialog-unbond>
   </v-card>
 </template>
 
@@ -110,13 +120,16 @@ import DotStatusWithTooltip from "@/components/Wallet/Common/DotStatusWithToolti
 import DialogWithdraw from "@/components/Wallet/Dialogs/DialogWithdraw.vue";
 import WarningCommissionIcon from "@/components/Wallet/Common/WarningCommissionIcon.vue";
 
+import DialogUnbond from "@/components/Wallet/Dialogs/DialogUnbond";
+
 export default {
   components: {
     ValidatorAvatar,
     Amount,
     DotStatusWithTooltip,
     DialogWithdraw,
-    WarningCommissionIcon
+    WarningCommissionIcon,
+    DialogUnbond
   },
 
   // TODO: replace placeholders
@@ -133,7 +146,9 @@ export default {
         { text: "", value: "actions", align: "right" }
       ],
       items: [],
-      selected: null
+      selected: null,
+      validator: null,
+      showUnbond: false
     };
   },
 
@@ -150,6 +165,17 @@ export default {
   },
 
   methods: {
+    onUnbond(validator) {
+      this.validator = {
+        description: {
+          moniker: validator.validator_name
+        },
+        status: validator.status,
+        jailed: validator.jailed,
+        operator_address: validator.validator_address
+      };
+      this.showUnbond = true;
+    },
     onClaimRewards(val = null) {
       if (val === null) {
         this.selected = this.delegations.map(val => {

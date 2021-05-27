@@ -41,6 +41,7 @@ export default async (ctx, inject) => {
       ctx.app.store.dispatch(`bank/subscribe`)
 
       await ctx.app.store.dispatch(`staking/getDelegations`)
+      await ctx.app.store.dispatch(`staking/getUnbondings`)
     } catch (e) {
       console.error(e)
     }

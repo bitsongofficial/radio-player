@@ -101,7 +101,7 @@
                 </v-btn>
               </template>
               <v-list tile class="py-0">
-                <v-list-item nuxt-link @click.stop="onDelegate(item)">
+                <v-list-item @click.stop="onDelegate(item)">
                   <v-list-item-title>Delegate</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -115,12 +115,14 @@
       :validator="selected"
       v-on:cancel="onClose"
     />
+
     <dialog-delegate
       v-if="showDelegate"
       v-model="selected"
       v-on:cancel="showDelegate = false"
       v-on:tx-success="showDelegate = false"
     ></dialog-delegate>
+
     <dialog-redelegate
       v-if="showRedelegate"
       v-on:cancel="showRedelegate = false"
