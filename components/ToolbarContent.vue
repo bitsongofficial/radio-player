@@ -17,38 +17,25 @@
     <v-spacer />
 
     <v-btn
-      v-if="$vuetify.breakpoint.mdAndUp && !isLoggedIn"
+      v-if="$vuetify.breakpoint.mdAndUp"
       active-class="no-active"
       class="mr-2"
-      to="/auth/create"
+      href="https://wallet.bitsong.network"
+      target="_blank"
       color="primary"
       dark
-      >Connect Wallet</v-btn
-    >
-    <v-btn
-      v-if="$vuetify.breakpoint.smAndDown && !isLoggedIn"
-      icon
-      to="/auth/import"
-    >
-      <v-icon size="28">mdi-account-circle</v-icon>
+      >Wallet
+      <v-icon right>mdi-open-in-new</v-icon>
     </v-btn>
-
-    <toolbar-user-menu v-if="isLoggedIn" />
   </v-row>
 </template>
 
 <script>
-import ToolbarUserMenu from "@/components/ToolbarUserMenu";
-
 export default {
-  components: {
-    ToolbarUserMenu
-  },
-
   computed: {
     isLoggedIn() {
       return this.$store.getters[`wallet/isLoggedIn`];
-    }
-  }
+    },
+  },
 };
 </script>

@@ -1,35 +1,22 @@
-import pkg from './package.json'
+import pkg from "./package.json";
 
 require("dotenv").config();
 import colors from "vuetify/es5/util/colors";
 
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   loading: {
-    color: '#C62828',
-    background: 'black'
+    color: "#C62828",
+    background: "black"
   },
 
   env: {
-    API: process.env.API || 'http://localhost:3001/api/v1',
-    IPFS: process.env.IPFS || 'http://127.0.0.1:8080/ipfs/',
+    API: process.env.API || "http://localhost:3001/api/v1",
+    IPFS: process.env.IPFS || "http://127.0.0.1:8080/ipfs/",
     VERSION: pkg.version,
     GA_ID: process.env.GA_ID || undefined,
-    WORKBOX: process.env.WORKBOX || false,
-    MICROSTAKEDENOM: process.env.MICROSTAKEDENOM || 'ubtsg',
-    STAKEDENOM: process.env.STAKEDENOM || 'btsg',
-    LCD: process.env.LCD || `http://localhost:1317`,
-    ADDRESS_PREFIX: process.env.ADDRESS_PREFIX || `bitsong`,
-    ADDRESS_LENGTH: process.env.ADDRESS_LENGTH || 46,
-    ADDRESS_REGEX: process.env.ADDRESS_REGEX || `^(bitsong1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$`,
-    HD_PATH: process.env.HD_PATH || `44'/639'/0'/0/`,
-    DECIMALS: process.env.DECIMALS || 6,
-    DEFAULT_GAS_PRICE: process.env.DEFAULT_GAS_PRICE || 0.25,
-    DEFAULT_GAS_LIMIT: process.env.DEFAULT_GAS_LIMIT || 200000,
-    SOCKET: process.env.SOCKET || `wss://explorebitsong.com/websocket`,
-    CHAIN_ID: process.env.CHAIN_ID || `bitsong-testnet-5`,
-    URL_ACCOUNT_EXPLORER: process.env.URL_ACCOUNT_EXPLORER || `https://explorebitsong.com`
+    WORKBOX: process.env.WORKBOX || false
   },
   /*
    ** Nuxt rendering mode
@@ -47,39 +34,45 @@ export default {
    */
   head: {
     titleTemplate: titleChunk => {
-      return titleChunk ? `${titleChunk} | BitSong` : "BitSong Blockchain Music Player";
+      return titleChunk
+        ? `${titleChunk} | BitSong`
+        : "BitSong Blockchain Music Player";
     },
-    meta: [{
-      charset: "utf-8"
-    },
-    {
-      name: "viewport",
-      content: "width=device-width, initial-scale=1"
-    },
-    {
-      hid: "description",
-      name: "description",
-      content: `BitSong Blockchain Music Player allows you to interact with media files.`
-    }
+    meta: [
+      {
+        charset: "utf-8"
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1"
+      },
+      {
+        hid: "description",
+        name: "description",
+        content: `BitSong Blockchain Music Player allows you to interact with media files.`
+      }
     ],
     script: [],
-    link: [{
-      rel: "icon",
-      type: "image/x-icon",
-      href: "/favicon.png"
-    },
-    // {
-    //   rel: "stylesheet",
-    //   href: "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700;800&display=swap"
-    // },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-    },
+    link: [
+      {
+        rel: "icon",
+        type: "image/x-icon",
+        href: "/favicon.png"
+      },
+      // {
+      //   rel: "stylesheet",
+      //   href: "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700;800&display=swap"
+      // },
+      {
+        rel: "stylesheet",
+        href:
+          "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      },
+      {
+        rel: "stylesheet",
+        href:
+          "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      }
       // {
       //   rel: "stylesheet",
       //   href:
@@ -95,15 +88,18 @@ export default {
    ** Plugins to load before mounting the App
    ** https://nuxtjs.org/guide/plugins
    */
-  plugins: [{
-    src: "~/plugins/app.js",
-    ssr: false
-  }, {
-    src: "~/plugins/seo-gtag.js",
-    ssr: false
-  }, {
-    src: "~/plugins/vee-validate.js"
-  }
+  plugins: [
+    {
+      src: "~/plugins/app.js",
+      ssr: false
+    },
+    {
+      src: "~/plugins/seo-gtag.js",
+      ssr: false
+    },
+    {
+      src: "~/plugins/vee-validate.js"
+    }
   ],
   /*
    ** Auto import components
@@ -113,7 +109,7 @@ export default {
   /*
    ** Nuxt.js dev-modules
    */
-  buildModules: ["@nuxtjs/vuetify", "@nuxtjs/pwa",],
+  buildModules: ["@nuxtjs/vuetify", "@nuxtjs/pwa"],
   /*
    ** Nuxt.js modules
    */
@@ -131,33 +127,42 @@ export default {
     ],
     "@nuxtjs/pwa",
     [
-      '@nuxtjs/device',
+      "@nuxtjs/device",
       //{defaultUserAgent: 'Mozilla/5.0 (Linux; Android 5.1.1; Nexus 6 Build/LYZ28E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.39 Mobile Safari/537.36'}
-      { defaultUserAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36' }
+      {
+        defaultUserAgent:
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+      }
     ]
   ],
 
   // Generate config
   generate: {
     routes() {
-      return axios.get(`${process.env.API}/generator`).then(res => res.data)
+      return axios.get(`${process.env.API}/generator`).then(res => res.data);
     }
   },
 
   pwa: {
     manifest: {
-      name: process.env.SEO_TITLE ? process.env.SEO_TITLE : `BitSong Blockchain Music Player`,
-      short_name: process.env.SHORT_TITLE ? process.env.SHORT_TITLE : `BitSong Blockchain Music Player`,
+      name: process.env.SEO_TITLE
+        ? process.env.SEO_TITLE
+        : `BitSong Blockchain Music Player`,
+      short_name: process.env.SHORT_TITLE
+        ? process.env.SHORT_TITLE
+        : `BitSong Blockchain Music Player`,
       theme_color: "#000000",
-      description: process.env.SEO_DESCRIPTION ? process.env.SEO_DESCRIPTION : `BitSong Blockchain Music Player allows you to interact with media files.`,
+      description: process.env.SEO_DESCRIPTION
+        ? process.env.SEO_DESCRIPTION
+        : `BitSong Blockchain Music Player allows you to interact with media files.`,
       background_color: "#000000",
       display: "standalone",
       start_url: "/",
-      lang: 'en'
+      lang: "en"
     },
     workbox: {
       // dev: process.env.WORKBOX_DEBUG,
-      enabled: process.env.WORKBOX,
+      enabled: Boolean(process.env.WORKBOX),
       config: { debug: process.env.WORKBOX_DEBUG },
 
       // importScripts: [
@@ -196,64 +201,64 @@ export default {
 
         // Cache fonts
         {
-          urlPattern: 'https://fonts.googleapis.com',
-          handler: 'StaleWhileRevalidate',
-          method: 'GET',
+          urlPattern: "https://fonts.googleapis.com",
+          handler: "StaleWhileRevalidate",
+          method: "GET",
           strategyOptions: {
-            cacheName: 'assets',
+            cacheName: "assets",
             cacheExpiration: {
               maxEntries: 10,
               maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-              purgeOnQuotaError: true,
+              purgeOnQuotaError: true
             }
-          },
+          }
         },
         {
-          urlPattern: 'https://fonts.gstatic.com',
-          handler: 'StaleWhileRevalidate',
-          method: 'GET',
+          urlPattern: "https://fonts.gstatic.com",
+          handler: "StaleWhileRevalidate",
+          method: "GET",
           strategyOptions: {
-            cacheName: 'assets',
+            cacheName: "assets",
             /*cacheableResponse: {
               statuses: [ 200 ],
             },*/
             cacheExpiration: {
               maxEntries: 10,
               maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-              purgeOnQuotaError: true,
+              purgeOnQuotaError: true
             }
-          },
+          }
         },
 
         // Cache Amazon S3
         {
-          urlPattern: 'https://s3.amazonaws.com',
-          handler: 'StaleWhileRevalidate',
-          method: 'GET',
+          urlPattern: "https://s3.amazonaws.com",
+          handler: "StaleWhileRevalidate",
+          method: "GET",
           strategyOptions: {
-            cacheName: 'assets',
+            cacheName: "assets",
             cacheExpiration: {
               maxEntries: 10,
               maxAgeSeconds: 60 * 60 * 24 * 1, // ( 1 day ) 1 year
-              purgeOnQuotaError: true,
+              purgeOnQuotaError: true
             }
-          },
+          }
         },
 
         // Cache IPFS
         {
           urlPattern: process.env.IPFS,
-          handler: 'StaleWhileRevalidate',
-          method: 'GET',
+          handler: "StaleWhileRevalidate",
+          method: "GET",
           strategyOptions: {
-            cacheName: 'ipfs',
+            cacheName: "ipfs",
             cacheExpiration: {
               maxEntries: 1000,
               maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-              purgeOnQuotaError: true,
+              purgeOnQuotaError: true
             }
-          },
-        },
+          }
+        }
 
         // // Cache basic API responses
         // {
@@ -276,12 +281,12 @@ export default {
         */
 
         // Assets
-        '/bitsong_logo_circle_red.svg',
-        '/bitsong_logo_red.svg',
-        'https://fonts.googleapis.com/css?family=Material+Icons',
-        'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap',
-        'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap'
-      ],
+        "/bitsong_logo_circle_red.svg",
+        "/bitsong_logo_red.svg",
+        "https://fonts.googleapis.com/css?family=Material+Icons",
+        "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap",
+        "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      ]
     }
   },
 
@@ -292,9 +297,7 @@ export default {
   axios: {
     proxy: true
   },
-  proxy: {
-
-  },
+  proxy: {},
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
@@ -330,7 +333,7 @@ export default {
       // };
       // Optimisation
       if (ctx && ctx.isClient) {
-        config.optimization.splitChunks.maxSize = 100000
+        config.optimization.splitChunks.maxSize = 100000;
       }
     }
   }
